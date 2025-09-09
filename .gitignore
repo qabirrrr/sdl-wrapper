@@ -1,0 +1,45 @@
+# CMake build directories
+/build/
+/build*/     # if you make build, build-debug, build-release, etc.
+
+
+/CMakeFiles/
+/CMakeCache.txt
+/cmake_install.cmake
+/Makefile
+
+
+# Ninja / MSVC / MinGW / IDE stuff
+/*.ninja
+/*.sln
+/*.vcxproj*
+/*.dir/
+*.ilk
+*.pdb
+*.obj
+*.exe
+*.dll
+*.lib
+*.a
+*.so
+*.dylib
+
+
+# Logs
+compile_commands.json
+CTestTestfile.cmake
+Testing/
+
+
+# macOS / Linux junk
+.DS_Store
+*.swp
+*~
+
+
+# VSCode / CLion / IDEs
+.vscode/
+.idea/
+
+
+
