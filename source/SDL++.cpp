@@ -3,106 +3,214 @@
 #include <cstring>
 
 // Namespace (Public)
-namespace SDL2
+namespace sdl
 {
 	SDL_Renderer* renderer;
-	bool allTexturesLoaded = true;
-	bool windowIsOpen = true;
+	bool all_textures_loaded = true;
+	bool running = true;
 
-	bool leftClicked;
-	bool rightClicked;
-	SDL_Point mousePos;
+	bool left_clicked;
+	bool right_clicked;
+	SDL_Point mouse_pos;
 };
 
 // Namespace (Private)
-namespace SDL2
+namespace sdl
 {
 	SDL_Window* window;
-	int screenWidth;
-	int screenHeight;
-	const Uint8* currentKeystate;
-	Uint8 previousKeystate[SDL_NUM_SCANCODES] = { 0 };
+	int screen_width;
+	int screen_height;
+	Mix_Music* current_music;
+	const uint8_t* current_keystate;
+	uint8_t previous_keystate[SDL_NUM_SCANCODES] = { 0 };
 };
 
-SDL2::TTF::TTF(std::string message, SDL_Point pos, SDL_Color color, TTF_Font* font, Uint8 alpha)
+
+
+// Namespace for colors
+std::vector<SDL_Color> sdl::colors::get_primary()
 {
-	Create(message, pos, color, font, alpha);
+	std::vector<SDL_Color> colors =
+	{
+		colors::RED,
+		colors::YELLOW,
+		colors::BLUE
+	};
+	return colors;
 }
 
-SDL2::TTF::~TTF()
+
+std::vector<SDL_Color> sdl::colors::get_secondary()
 {
-	if (m_Texture) {
-		SDL_DestroyTexture(m_Texture);
-		m_Texture = nullptr;
+	std::vector<SDL_Color> colors =
+	{
+		colors::ORANGE,
+		colors::GREEN,
+		colors::PURPLE,
+	};
+	return colors;
+}
+
+std::vector<SDL_Color> sdl::colors::get_foundational()
+{
+	std::vector<SDL_Color> colors =
+	{
+		colors::ORANGE,
+		colors::RED,
+		colors::GREEN,
+		colors::YELLOW,
+		colors::PURPLE,
+		colors::BLUE
+	};
+	return colors;
+}
+
+std::vector<SDL_Color> sdl::colors::get_all()
+{
+	std::vector<SDL_Color> colors =
+	{
+		colors::BLACK,
+		colors::WHITE,
+		colors::RED,
+		colors::GREEN,
+		colors::BLUE,
+		colors::YELLOW,
+		colors::CYAN,
+		colors::MAGENTA,
+		colors::GRAY,
+		colors::ORANGE,
+		colors::BROWN,
+		colors::PINK,
+		colors::PURPLE,
+		colors::VIOLET,
+		colors::INDIGO,
+		colors::GOLD,
+		colors::SILVER,
+		colors::MAROON,
+		colors::OLIVE,
+		colors::TEAL,
+		colors::NAVY,
+		colors::LAVENDER,
+		colors::BEIGE,
+		colors::TURQUOISE,
+		colors::SALMON,
+		colors::CRIMSON,
+		colors::CORAL,
+		colors::MINT,
+		colors::PEACH,
+		colors::CHARTREUSE,
+		colors::AQUAMARINE,
+		colors::LIME,
+		colors::TOMATO,
+		colors::WHEAT
+	};
+	return colors;
+}
+
+
+
+// Namespace for ttf
+sdl::ttf::ttf(const std::string message, SDL_Color color, TTF_Font* font, uint8_t alpha, SDL_Point pos)
+{
+	create(message, color, font, alpha, pos);
+}
+
+sdl::ttf::~ttf()
+{
+	if (m_texture) {
+		SDL_DestroyTexture(m_texture);
+		m_texture = nullptr;
 	}
 }
 
 // Original: https://stackoverflow.com/questions/22886500/how-to-render-text-in-sdl2
-void SDL2::TTF::Create(std::string message, SDL_Point pos, SDL_Color color, TTF_Font* font, Uint8 alpha)
+void sdl::ttf::create(const std::string message, SDL_Color color, TTF_Font* font, uint8_t alpha, SDL_Point pos)
 {
-	m_Message = message;
-	m_Font = font;
-	m_Color = color;
-	m_Alpha = alpha;
+	m_message = message;
+	m_font = font;
+	m_color = color;
+	m_alpha = alpha;
 
 	int text_width;
 	int text_height;
 	SDL_Surface* surface;
 
 	surface = TTF_RenderText_Blended(font, message.c_str(), color);
-	m_Texture = SDL_CreateTextureFromSurface(renderer, surface);
+	m_texture = SDL_CreateTextureFromSurface(renderer, surface);
 	text_width = surface->w;
 	text_height = surface->h;
 	SDL_FreeSurface(surface);
 
-	m_Destination.x = pos.x;
-	m_Destination.y = pos.y;
-	m_Destination.w = text_width;
-	m_Destination.h = text_height;
+	m_dst.x = pos.x;
+	m_dst.y = pos.y;
+	m_dst.w = text_width;
+	m_dst.h = text_height;
 }
 
-void SDL2::TTF::EditText(std::string message)
+SDL_Rect sdl::ttf::get_dst()
 {
-	m_Message = message;
+	return m_dst;
+}
 
-	if (m_Texture != nullptr)
+void sdl::ttf::edit_text(const std::string message)
+{
+	m_message = message;
+
+	if (m_texture != nullptr)
 	{
-		SDL_DestroyTexture(m_Texture);
-		m_Texture = nullptr;
+		SDL_DestroyTexture(m_texture);
+		m_texture = nullptr;
 	}
 
 	int text_width;
 	int text_height;
 	SDL_Surface* surface;
 
-	surface = TTF_RenderText_Blended(m_Font, message.c_str(), m_Color);
-	m_Texture = SDL_CreateTextureFromSurface(renderer, surface);
+	surface = TTF_RenderText_Blended(m_font, message.c_str(), m_color);
+	m_texture = SDL_CreateTextureFromSurface(renderer, surface);
 	text_width = surface->w;
 	text_height = surface->h;
 	SDL_FreeSurface(surface);
 
-	SDL_SetTextureAlphaMod(m_Texture, m_Alpha);
+	SDL_SetTextureAlphaMod(m_texture, m_alpha);
 
-	m_Destination.w = text_width;
-	m_Destination.h = text_height;
+	m_dst.w = text_width;
+	m_dst.h = text_height;
 }
 
-void SDL2::TTF::EditAlpha(Uint8 alpha)
+void sdl::ttf::edit_alpha(uint8_t alpha)
 {
-	m_Alpha = alpha;
-	SDL_SetTextureAlphaMod(m_Texture, alpha);
+	m_alpha = alpha;
+	SDL_SetTextureAlphaMod(m_texture, alpha);
 }
 
-void SDL2::TTF::Edit(std::string message, SDL_Point pos, SDL_Color color, Uint8 alpha)
+void sdl::ttf::edit_position(SDL_Point pos)
 {
-	m_Message = message;
-	m_Color = color;
-	m_Alpha = alpha;
+	m_dst.x = pos.x;
+	m_dst.y = pos.y;
+}
 
-	if (m_Texture != nullptr)
+void sdl::ttf::edit_position(int x, int y)
+{
+	m_dst.x = x;
+	m_dst.y = y;
+}
+
+void sdl::ttf::edit_color(SDL_Color color)
+{
+	m_color = color;
+}
+
+void sdl::ttf::edit(const std::string message, SDL_Color color, uint8_t alpha, SDL_Point pos)
+{
+	m_message = message;
+	m_color = color;
+	m_alpha = alpha;
+
+	if (m_texture != nullptr)
 	{
-		SDL_DestroyTexture(m_Texture);
-		m_Texture = nullptr;
+		SDL_DestroyTexture(m_texture);
+		m_texture = nullptr;
 	}
 
 
@@ -110,57 +218,57 @@ void SDL2::TTF::Edit(std::string message, SDL_Point pos, SDL_Color color, Uint8 
 	int text_height;
 	SDL_Surface* surface;
 
-	surface = TTF_RenderText_Blended(m_Font, message.c_str(), color);
-	m_Texture = SDL_CreateTextureFromSurface(renderer, surface);
+	surface = TTF_RenderText_Blended(m_font, message.c_str(), color);
+	m_texture = SDL_CreateTextureFromSurface(renderer, surface);
 	text_width = surface->w;
 	text_height = surface->h;
 	SDL_FreeSurface(surface);
 
-	SDL_SetTextureBlendMode(m_Texture, SDL_BLENDMODE_BLEND);
-	SDL_SetTextureAlphaMod(m_Texture, alpha);
+	SDL_SetTextureBlendMode(m_texture, SDL_BLENDMODE_BLEND);
+	SDL_SetTextureAlphaMod(m_texture, alpha);
 
-	m_Destination.x = pos.x;
-	m_Destination.y = pos.y;
-	m_Destination.w = text_width;
-	m_Destination.h = text_height;
+	m_dst.x = pos.x;
+	m_dst.y = pos.y;
+	m_dst.w = text_width;
+	m_dst.h = text_height;
 }
 
-void SDL2::TTF::Render()
+void sdl::ttf::render()
 {
-	SDL_RenderCopy(renderer, m_Texture, NULL, &m_Destination);
+	SDL_RenderCopy(renderer, m_texture, NULL, &m_dst);
 }
 
-bool SDL2::TTF::MouseHovered()
+bool sdl::ttf::mouse_hovered()
 {
-	return Mouse::Hovered(m_Destination);
+	return mouse::hovered(m_dst);
 }
 
-bool SDL2::TTF::MouseClickedLeft()
+bool sdl::ttf::mouse_clicked_left()
 {
-	return Mouse::ClickedLeft(m_Destination);
+	return mouse::clicked_left(m_dst);
 }
 
-bool SDL2::TTF::MouseClickedRight()
+bool sdl::ttf::mouse_clicked_right()
 {
-	return Mouse::ClickedRight(m_Destination);
+	return mouse::clicked_right(m_dst);
 }
 
 
 
 // Rect struct
-SDL2::Rect::Rect(int x, int y, int w, int h, SDL_Color color)
+sdl::rect::rect(int x, int y, int w, int h, SDL_Color color)
 {
-	SetProperties(x, y, w, h);
-	SetColor(color);
+	edit_properties(x, y, w, h);
+	edit_color(color);
 }
-void SDL2::Rect::SetColor(SDL_Color color)
+void sdl::rect::edit_color(SDL_Color color)
 {
-	m_Color.r = color.r;
-	m_Color.g = color.g;
-	m_Color.b = color.b;
+	m_color.r = color.r;
+	m_color.g = color.g;
+	m_color.b = color.b;
 }
 
-void SDL2::Rect::SetProperties(int x, int y, int w, int h)
+void sdl::rect::edit_properties(int x, int y, int w, int h)
 {
 	this->x = x;
 	this->y = y;
@@ -169,248 +277,259 @@ void SDL2::Rect::SetProperties(int x, int y, int w, int h)
 }
 
 
-void SDL2::Rect::RenderOutline(Uint8 alpha)
+void sdl::rect::render_outline(uint8_t alpha)
 {
 	SDL_Rect rect = { x, y, w, h };
 
-	SDL_SetRenderDrawColor(SDL2::renderer, m_Color.r, m_Color.g, m_Color.b, alpha);
-	SDL_RenderDrawRect(SDL2::renderer, &rect);
+	SDL_SetRenderDrawColor(sdl::renderer, m_color.r, m_color.g, m_color.b, alpha);
+	SDL_RenderDrawRect(sdl::renderer, &rect);
 }
 
-void SDL2::Rect::RenderFill(Uint8 alpha)
+void sdl::rect::render_fill(uint8_t alpha)
 {
 	SDL_Rect rect = { x, y, w, h };
 
-	SDL_SetRenderDrawColor(SDL2::renderer, m_Color.r, m_Color.g, m_Color.b, alpha);
-	SDL_RenderFillRect(SDL2::renderer, &rect);
+	SDL_SetRenderDrawColor(sdl::renderer, m_color.r, m_color.g, m_color.b, alpha);
+	SDL_RenderFillRect(sdl::renderer, &rect);
 }
 
-bool SDL2::Rect::MouseHovered()
+bool sdl::rect::mouse_hovered()
 {
 	SDL_Rect rect = { x,y,w,h };
-	return Mouse::Hovered(rect);
+	return mouse::hovered(rect);
 }
 
-bool SDL2::Rect::MouseClickedLeft()
+bool sdl::rect::mouse_clicked_left()
 {
 	SDL_Rect rect = { x,y,w,h };
-	return Mouse::ClickedLeft(rect);
+	return mouse::clicked_left(rect);
 }
 
-bool SDL2::Rect::MouseClickedRight()
+bool sdl::rect::mouse_clicked_right()
 {
 	SDL_Rect rect = { x,y,w,h };
-	return Mouse::ClickedRight(rect);
+	return mouse::clicked_right(rect);
 }
 
 
-bool SDL2::Rect::CollidedWith(Rect rect)
+bool sdl::rect::collided_width(rect rect)
 {
 	SDL_Rect rectA = { x, y, w, h };
 	SDL_Rect rectB = rect.c_rec();
-	return CheckCollisions(rectA, rectB);
+	return check_collisions(rectA, rectB);
 }
 
-bool SDL2::Rect::CollidedWith(SDL_Rect rect)
+bool sdl::rect::collided_with(SDL_Rect rect)
 {
 	SDL_Rect rectA = { x, y, w, h };
-	return CheckCollisions(rectA, rect);
+	return check_collisions(rectA, rect);
 }
 
-SDL_Rect SDL2::Rect::c_rec()
+SDL_Rect sdl::rect::c_rec()
 {
 	return { x, y, w, h };
 }
 
 // Texture class
-SDL2::Texture::Texture(std::string filepath)
+sdl::texture::texture(const std::string filepath)
 {
-	Load(filepath);
+	load(filepath);
 }
 
-SDL2::Texture::~Texture()
+sdl::texture::~texture()
 {
-	SDL_DestroyTexture(m_SDL_Texture);
+	SDL_DestroyTexture(m_sdl_texture);
 }
 
-void SDL2::Texture::Load(std::string filepath)
+void sdl::texture::load(const std::string filepath)
 {
-	m_SDL_Texture = IMG_LoadTexture(renderer, filepath.c_str());
-	if (m_SDL_Texture == nullptr)
+	m_sdl_texture = IMG_LoadTexture(renderer, filepath.c_str());
+	if (m_sdl_texture == nullptr)
 	{
-		if (allTexturesLoaded)
+		if (all_textures_loaded)
 		{
 			std::cout << "Failed to load textures\n";
-			allTexturesLoaded = false;
+			all_textures_loaded = false;
 		}
 		std::cout << "Error: " << IMG_GetError() << "\n";
 	}
-	SDL_SetTextureBlendMode(m_SDL_Texture, SDL_BLENDMODE_BLEND);
+	SDL_SetTextureBlendMode(m_sdl_texture, SDL_BLENDMODE_BLEND);
 }
 
-void SDL2::Texture::Render(SDL_Rect& src, SDL_Rect& dst, Uint8 alpha, SDL_RendererFlip flip)
+void sdl::texture::render(SDL_Rect& src, SDL_Rect& dst, uint8_t alpha, SDL_RendererFlip flip)
 {
 	if (flip == SDL_FLIP_NONE)
 	{
-		SDL_RenderCopy(renderer, m_SDL_Texture, &src, &dst);
-		SDL_SetTextureAlphaMod(m_SDL_Texture, alpha);
+		SDL_RenderCopy(renderer, m_sdl_texture, &src, &dst);
+		SDL_SetTextureAlphaMod(m_sdl_texture, alpha);
 	}
 	else
 	{
-		SDL_RenderCopyEx(renderer, m_SDL_Texture, &src, &dst, 0, NULL, flip);
-		SDL_SetTextureAlphaMod(m_SDL_Texture, alpha);
+		SDL_RenderCopyEx(renderer, m_sdl_texture, &src, &dst, 0, NULL, flip);
+		SDL_SetTextureAlphaMod(m_sdl_texture, alpha);
 	}
 }
 
-void SDL2::Texture::Render(Rect& Source, Rect& Destination, Uint8 alpha, SDL_RendererFlip flip)
+void sdl::texture::render(rect& src, rect& dst, uint8_t alpha, SDL_RendererFlip flip)
 {
-	SDL_Rect s = Source.c_rec();
-	SDL_Rect d = Destination.c_rec();
+	SDL_Rect s = src.c_rec();
+	SDL_Rect d = dst.c_rec();
 	if (flip == SDL_FLIP_NONE)
 	{
-		SDL_RenderCopy(renderer, m_SDL_Texture, &s, &d);
+		SDL_RenderCopy(renderer, m_sdl_texture, &s, &d);
 	}
 	else
 	{
-		SDL_RenderCopyEx(renderer, m_SDL_Texture, &s, &d, 0, NULL, flip);
+		SDL_RenderCopyEx(renderer, m_sdl_texture, &s, &d, 0, NULL, flip);
 	}
 }
 
 // Asset namespace
-SDL2::Asset::Background::Background()
+sdl::asset::background::background()
 {
-	m_Source = { 0, 0, screenWidth, screenHeight };
-	m_Destination = { 0, 0, screenWidth, screenHeight };
+	m_source = { 0, 0, screen_width, screen_height };
+	m_destination = { 0, 0, screen_width, screen_height };
 }
 
-void SDL2::Asset::Background::LoadTexture(std::string filepath)
+void sdl::asset::background::load_texture(const std::string filepath)
 {
-	m_Texture.Load(filepath);
+	m_texture.load(filepath);
 }
 
-void SDL2::Asset::Background::Render(Uint8 alpha, SDL_RendererFlip flip)
+void sdl::asset::background::render(uint8_t alpha, SDL_RendererFlip flip)
 {
 	if (flip == SDL_FLIP_NONE)
 	{
-		m_Texture.Render(m_Source, m_Destination, alpha);
+		m_texture.render(m_source, m_destination, alpha);
 	}
 	else
 	{
-		m_Texture.Render(m_Source, m_Destination, alpha, flip);
+		m_texture.render(m_source, m_destination, alpha, flip);
 	}
 }
 
 
 
-void SDL2::Asset::Entity::LoadTexture(std::string filepath)
+void sdl::asset::entity::load_texture(const std::string filepath)
 {
-	m_Texture.Load(filepath);
+	m_texture.load(filepath);
 }
 
-void SDL2::Asset::Entity::SetSrc(int x, int y, int w, int h)
+void sdl::asset::entity::set_src(int x, int y, int w, int h)
 {
-	m_Source.x = x;
-	m_Source.y = y;
-	m_Source.w = w;
-	m_Source.h = h;
+	m_source.x = x;
+	m_source.y = y;
+	m_source.w = w;
+	m_source.h = h;
 }
 
-void SDL2::Asset::Entity::SetDst(int x, int y, int w, int h)
+void sdl::asset::entity::set_dst(int x, int y, int w, int h)
 {
-	m_Destination.x = x;
-	m_Destination.y = y;
-	m_Destination.w = w;
-	m_Destination.h = h;
+	m_destination.x = x;
+	m_destination.y = y;
+	m_destination.w = w;
+	m_destination.h = h;
 }
 
-void SDL2::Asset::Entity::SetSrc(SDL_Rect src)
+void sdl::asset::entity::set_src(SDL_Rect src)
 {
-	m_Source.x = src.x;
-	m_Source.y = src.y;
-	m_Source.w = src.w;
-	m_Source.h = src.h;
+	m_source.x = src.x;
+	m_source.y = src.y;
+	m_source.w = src.w;
+	m_source.h = src.h;
 }
 
-void SDL2::Asset::Entity::SetDst(SDL_Rect dst)
+void sdl::asset::entity::set_dst(SDL_Rect dst)
 {
-	m_Destination.x = dst.x;
-	m_Destination.y = dst.y;
-	m_Destination.w = dst.w;
-	m_Destination.h = dst.h;
+	m_destination.x = dst.x;
+	m_destination.y = dst.y;
+	m_destination.w = dst.w;
+	m_destination.h = dst.h;
 }
 
-SDL_Rect SDL2::Asset::Entity::Dst()
+void sdl::asset::entity::set_src(rect src)
 {
-	return m_Destination;
+	m_source.x = src.x;
+	m_source.y = src.y;
+	m_source.w = src.w;
+	m_source.h = src.h;
 }
 
-SDL2::Rect SDL2::Asset::Entity::DstEx()
+void sdl::asset::entity::set_dst(rect dst)
 {
-	Rect dst;
-	dst.w = m_Destination.w;
-	dst.h = m_Destination.h;
-	dst.x = m_Destination.x;
-	dst.y = m_Destination.y;
+	m_destination.x = dst.x;
+	m_destination.y = dst.y;
+	m_destination.w = dst.w;
+	m_destination.h = dst.h;
+}
+
+sdl::rect sdl::asset::entity::get_dst()
+{
+	rect dst;
+	dst.w = m_destination.w;
+	dst.h = m_destination.h;
+	dst.x = m_destination.x;
+	dst.y = m_destination.y;
 	return dst;
 }
 
-void SDL2::Asset::Entity::Render(Uint8 alpha, SDL_RendererFlip flip)
+void sdl::asset::entity::render(uint8_t alpha, SDL_RendererFlip flip)
 {
 	if (flip == SDL_FLIP_NONE)
 	{
-		m_Texture.Render(m_Source, m_Destination, alpha);
+		m_texture.render(m_source, m_destination, alpha);
 	}
 	else
 	{
-		m_Texture.Render(m_Source, m_Destination, alpha, flip);
+		m_texture.render(m_source, m_destination, alpha, flip);
 	}
 }
 
-bool SDL2::Asset::Entity::MouseHovered()
+bool sdl::asset::entity::mouse_hovered()
 {
-	return Mouse::Hovered(m_Destination);
+	return mouse::hovered(m_destination);
 }
 
-bool SDL2::Asset::Entity::MouseClickedLeft()
+bool sdl::asset::entity::mouse_clicked_left()
 {
-	return Mouse::ClickedLeft(m_Destination);
+	return mouse::clicked_left(m_destination);
 }
 
-bool SDL2::Asset::Entity::MouseClickedRight()
+bool sdl::asset::entity::mouse_clicked_right()
 {
-	return Mouse::ClickedRight(m_Destination);
+	return mouse::clicked_right(m_destination);
 }
 
-bool SDL2::Asset::Entity::CollidedWith(Entity& entity)
+bool sdl::asset::entity::collided_with(entity& entity)
 {
-	return CheckCollisions(m_Destination, entity.Dst());
+	return check_collisions(m_destination, (entity.get_dst()).c_rec());
 }
 
 
-bool SDL2::Asset::Entity::CollidedWith(Rect rect)
+bool sdl::asset::entity::collided_with(rect rect)
 {
-	return rect.CollidedWith(m_Destination);
+	return rect.collided_with(m_destination);
 }
 
-bool SDL2::Asset::Entity::CollidedWith(SDL_Rect rect)
+bool sdl::asset::entity::collided_with(SDL_Rect rect)
 {
-	return CheckCollisions(m_Destination, rect);
+	return check_collisions(m_destination, rect);
 }
 
 
 
 // Render namespace
-void SDL2::Render::Clear()
+void sdl::render::clear()
 {
 	SDL_RenderClear(renderer);
 }
 
-void SDL2::Render::Present()
+void sdl::render::present()
 {
 	SDL_RenderPresent(renderer);
 }
 
-void SDL2::Render::Color(const SDL_Color color)
+void sdl::render::color(const SDL_Color color)
 {
 	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 }
@@ -419,80 +538,227 @@ void SDL2::Render::Color(const SDL_Color color)
 
 
 // Mouse namespace
-bool SDL2::Mouse::Hovered(SDL_Rect& rect)
+bool sdl::mouse::hovered(SDL_Rect& rect)
 {
-	return SDL_PointInRect(&mousePos, &rect);
+	return SDL_PointInRect(&mouse_pos, &rect);
 }
 
-bool SDL2::Mouse::ClickedLeft(SDL_Rect& rect)
+bool sdl::mouse::clicked_left(SDL_Rect& rect)
 {
-	return SDL_PointInRect(&mousePos, &rect) && leftClicked;
+	return SDL_PointInRect(&mouse_pos, &rect) && left_clicked;
 }
 
-bool SDL2::Mouse::ClickedRight(SDL_Rect& rect)
+bool sdl::mouse::clicked_right(SDL_Rect& rect)
 {
-	return SDL_PointInRect(&mousePos, &rect) && rightClicked;
+	return SDL_PointInRect(&mouse_pos, &rect) && right_clicked;
 }
 
 
-bool SDL2::Mouse::Hovered(Rect& rect)
+bool sdl::mouse::hovered(rect& rect)
 {
 	SDL_Rect r = rect.c_rec();
-	return SDL_PointInRect(&mousePos, &r);
+	return SDL_PointInRect(&mouse_pos, &r);
 }
 
-bool SDL2::Mouse::ClickedLeft(Rect& rect)
+bool sdl::mouse::clicked_left(rect& rect)
 {
 	SDL_Rect r = rect.c_rec();
-	return SDL_PointInRect(&mousePos, &r) && leftClicked;
+	return SDL_PointInRect(&mouse_pos, &r) && left_clicked;
 }
 
-bool SDL2::Mouse::ClickedRight(Rect& rect)
+bool sdl::mouse::clicked_right(rect& rect)
 {
 	SDL_Rect r = rect.c_rec();
-	return SDL_PointInRect(&mousePos, &r) && rightClicked;
+	return SDL_PointInRect(&mouse_pos, &r) && right_clicked;
 }
 
 
 
 // Namespace for keystate
-void CopyKey(Uint8* dst, const Uint8* src) // helper
+void copy_key(uint8_t* dst, const uint8_t* src) // helper
 {
-	std::memcpy(dst, src, SDL_NUM_SCANCODES * sizeof(Uint8));
+	std::memcpy(dst, src, SDL_NUM_SCANCODES * sizeof(uint8_t));
 }
 
-void SDL2::Keys::Update()
+void sdl::keys::update()
 {
-	CopyKey(previousKeystate, currentKeystate); // previousState = currentState;  (essentially)
+	copy_key(previous_keystate, current_keystate); // previousState = currentState;  (essentially)
 }
 
-bool SDL2::Keys::Pressed(SDL_Scancode key)
+bool sdl::keys::pressed(SDL_Scancode key)
 {
-	return currentKeystate[key] && !previousKeystate[key];
+	return current_keystate[key] && !previous_keystate[key];
 }
 
-bool SDL2::Keys::Released(SDL_Scancode key)
+bool sdl::keys::released(SDL_Scancode key)
 {
-	return !currentKeystate[key] && previousKeystate[key];
-}
-
-
-bool SDL2::Keys::Held(SDL_Scancode key)
-{
-	return currentKeystate[key];
+	return !current_keystate[key] && previous_keystate[key];
 }
 
 
+bool sdl::keys::held(SDL_Scancode key)
+{
+	return current_keystate[key];
+}
+
+
+
+// Namespace for audio
+sdl::audio::sound::sound(const std::string filepath)
+{
+	load_sound(filepath);
+}
+
+sdl::audio::sound::~sound()
+{
+	Mix_FreeChunk(m_sound);
+}
+
+void sdl::audio::sound::load_sound(const std::string filepath)
+{
+	m_filepath = filepath;
+	m_sound = Mix_LoadWAV(m_filepath.c_str());
+	if (m_sound == nullptr)
+	{
+		std::cout << "Error (Loading sound): " << Mix_GetError() << '\n';
+	}
+}
+
+std::string sdl::audio::sound::get_filepath()
+{
+	return m_filepath;
+}
+
+void sdl::audio::sound::change_channel(int channel)
+{
+	m_channel = channel;
+}
+
+void sdl::audio::sound::adjust_volume(int volume)
+{
+	m_volume = volume;
+	Mix_VolumeChunk(m_sound, volume);
+}
+
+int sdl::audio::sound::get_channel()
+{
+	return m_channel;
+}
+
+int sdl::audio::sound::get_volume()
+{
+	return m_volume;
+}
+
+void sdl::audio::sound::play(int loops)
+{
+	Mix_PlayChannel(m_channel, m_sound, loops); 
+}
+
+void sdl::audio::sound::stop()
+{
+	Mix_HaltChannel(m_channel);
+}
+
+void sdl::audio::sound::pause()
+{
+	Mix_Pause(m_channel);
+	is_paused = true;
+}
+
+void sdl::audio::sound::resume()
+{
+	Mix_Resume(m_channel);
+	is_paused = false;
+}
+
+
+sdl::audio::music::music(const std::string filepath)
+{
+	load_music(filepath);
+}
+
+void sdl::audio::music::load_music(const std::string filepath)
+{
+	m_filepath = filepath;
+	m_music = Mix_LoadMUS(m_filepath.c_str());
+	if (m_music == nullptr)
+	{
+		std::cout << "Error (Loading music): " << Mix_GetError() << '\n';
+	}
+}
+
+std::string sdl::audio::music::get_filepath()
+{
+	return m_filepath;
+}
+
+void sdl::audio::music::adjust_volume(int volume)
+{
+	m_volume = volume;
+	Mix_VolumeMusic(volume);
+}
+
+int sdl::audio::music::get_volume()
+{
+	return m_volume;
+}
+
+bool sdl::audio::music::is_on()
+{
+	if (current_music != m_music || Mix_PlayingMusic() == 0)
+	{
+		return false;
+	}
+	else 
+	{
+		return true;
+	}
+}
+
+
+void sdl::audio::music::play(int loops)
+{
+	if (Mix_PlayingMusic() == 0)
+	{
+		Mix_PlayMusic(m_music, loops);
+		current_music = m_music;
+	}
+}
+
+void sdl::audio::music::stop()
+{
+	Mix_HaltMusic();
+	current_music = nullptr;
+}
+
+void sdl::audio::music::pause()
+{
+	Mix_PauseMusic();
+	is_paused = true;
+}
+
+void sdl::audio::music::resume()
+{
+	Mix_ResumeMusic();
+	is_paused = false;
+}
+
+
+sdl::audio::music::~music()
+{
+	Mix_FreeMusic(m_music);
+}
 
 
 // Core
-void SDL2::Init(std::string title, int width, int height, Uint32 flags)
+void sdl::init(const std::string title, int width, int height, Uint32 flags)
 {
 	bool canInit = true;
-	screenWidth = width;
-	screenHeight = height;
+	screen_width = width;
+	screen_height = height;
 
-	currentKeystate = SDL_GetKeyboardState(NULL);
+	current_keystate = SDL_GetKeyboardState(NULL);
 
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
 	{
@@ -521,7 +787,7 @@ void SDL2::Init(std::string title, int width, int height, Uint32 flags)
 			std::cout << "API failed to load\n";
 			canInit = false;
 		}
-		std::cout << "Error (TTF): " << SDL_GetError() << "\n";
+		std::cout << "Error (Mixer): " << SDL_GetError() << "\n";
 	}
 
 	window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, flags);
@@ -550,7 +816,7 @@ void SDL2::Init(std::string title, int width, int height, Uint32 flags)
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 }
 
-void SDL2::Destroy()
+void sdl::cleanup()
 {
 	Mix_CloseAudio();
 	Mix_Quit();
@@ -560,37 +826,37 @@ void SDL2::Destroy()
 	SDL_DestroyWindow(window);
 }
 
-void SDL2::PollEvents()
+void sdl::handle_events()
 {
 	SDL_Event ev;
-	leftClicked = false;
-	rightClicked = false;
+	left_clicked = false;
+	right_clicked = false;
 
 	while (SDL_PollEvent(&ev))
 	{
 		if (ev.type == SDL_QUIT)
 		{
-			windowIsOpen = false;
+			running = false;
 			break;
 		}
 		if (ev.type == SDL_MOUSEBUTTONDOWN)
 		{
 			if (ev.button.button == SDL_BUTTON_LEFT)
 			{
-				leftClicked = true;
+				left_clicked = true;
 			}
 			if (ev.button.button == SDL_BUTTON_RIGHT)
 			{
-				rightClicked = true;
+				right_clicked = true;
 			}
 		}
-		SDL_GetMouseState(&mousePos.x, &mousePos.y);
+		SDL_GetMouseState(&mouse_pos.x, &mouse_pos.y);
 	}
 
 }
 
 // Original: https://lazyfoo.net/tutorials/SDL/27_collision_detection/index.php
-bool SDL2::CheckCollisions(SDL_Rect rectA, SDL_Rect rectB)
+bool sdl::check_collisions(SDL_Rect rectA, SDL_Rect rectB)
 {
 	//The sides of the rectangles
 	int leftA, leftB;
@@ -635,7 +901,7 @@ bool SDL2::CheckCollisions(SDL_Rect rectA, SDL_Rect rectB)
 	return true;
 }
 
-bool SDL2::CheckCollisions(Rect rectA, Rect rectB)
+bool sdl::check_collisions(rect rectA, rect rectB)
 {
 	//The sides of the rectangles
 	int leftA, leftB;
@@ -680,8 +946,8 @@ bool SDL2::CheckCollisions(Rect rectA, Rect rectB)
 	return true;
 }
 
-void SDL2::Update()
+void sdl::update()
 {
-	Keys::Update();
+	keys::update();
 	SDL_Delay(1000 / 60);
 }
