@@ -4,12 +4,12 @@ A C++ wrapper around SDL2
 
 ## Features
 - Built in preset of colors
-- Custom objects (rect, ttf, asset)
+- Custom objects (rect, text, audio, textures)
 - Easier input handling (clicks, keystate)
 - Error handling & checks done automatically
 
 ## Build
-- Install [MinGW](https://sourceforge.net/projects/mingw-w64/?utm_source=chatgpt.com) on your windows system
+- Install [MinGW](https://sourceforge.net/projects/mingw-w64/) on your windows system
 - Download latest from [Releases](https://github.com/qabirrrr/sdl-wrapper/releases)
 
 Extract SDL++ and put it in your C: drive
@@ -45,7 +45,7 @@ If you're using SDL++, use everything in Base & Add-On folders
  
 - Render a rectangle
 - Left click on it to equip it, left click again to unequip
-- Press UP to increase its size, DOWN to decrease its size
+- Press UP to increase its size, DOWN to decrease its size (if equipped)
 
 <pre>
 #include &lt;SDL++&gt;
