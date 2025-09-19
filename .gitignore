@@ -1,6 +1,6 @@
 # CMake build directories
 /build/
-/build*/     # if you make build, build-debug, build-release, etc.
+/build*/     
 
 
 /CMakeFiles/

@@ -52,46 +52,71 @@ If you're using SDL++, use everything in Base & Add-On folders
 
 int main(int argc, char* args[])
 {
-    sdl::init("SDL++ (Demo)", 1280, 720, 0);
+    // Initialize SDL2
+    sdl::init("SDL++ (Demo)", 1280, 720, 0); 
 
-    sdl::rect rect((1280-80)/2, (720-80)/2, 80, 80);
-    int state = 0;
+    // Create a rectangle
+    sdl::rect_t rect((1280-80)/2, (720-80)/2, 80, 80);
 
-    while (sdl::running)
-    {
+    int state = 0; 
+
+    // Loop if app is running
+    while (sdl::running())
+    {   
+        // Handle events
         sdl::handle_events();
 
-        // logic
-        if (rect.mouse_clicked_left())
+        // Change state when left clicked
+        if (rect.left_clicked())
         {
             state = (state + 1) % 2;
         }
 
         if (state != 0)
         {
-            if (sdl::keys::held(SDL_SCANCODE_UP))
+            // Change color to red
+            rect.edit_color(sdl::colors::RED);
+
+            // Size grows
+            if (sdl::keys::held(SDL_SCANCODE_UP)) 
             {
                 rect.w += 1;
                 rect.h += 1;
             }
+
+            // Size shrinks
             if (sdl::keys::held(SDL_SCANCODE_DOWN))
             {
                 rect.w -= 1;
                 rect.h -= 1;
             }
-            rect.x = sdl::mouse_pos.x - (rect.w/2);
-            rect.y = sdl::mouse_pos.y - (rect.h/2);
+
+            // Place mouse cursor at the center of the rect
+            rect.x = sdl::get_mousepos().x - (rect.w/2);
+            rect.y = sdl::get_mousepos().y - (rect.h/2);
         }
 
-        // render
-        sdl::render::color(sdl::colors::BLUE); // blue background
+        else 
+        {
+            // Change color to black again
+            rect.edit_color(sdl::colors::BLACK);
+        }
+
+        // Clear renderer & set background to blue
+        sdl::render::color(sdl::colors::BLUE); 
         sdl::render::clear();
 
+        // Render rect
         rect.render_fill();
 
+        // Display
         sdl::render::present();
+
+        // Update
         sdl::update();
     }
+    
+    // Clean up everything
     sdl::cleanup();
     return 0;
 }

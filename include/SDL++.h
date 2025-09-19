@@ -6,164 +6,72 @@
 #include <SDL_mixer.h>
 #include <string>
 #include <vector>
-
-// TODOS BEFORE RELEASE:
-// -> FIX : i can't make a vector of audios rn. probably the same for some of my other classes or structs
-// -> Enable text input (e.g. user can write "abc" and I can detect the string "abc")
+#include <optional>
 
 namespace sdl
 {
-	extern SDL_Renderer* renderer; // The game renderer
-	extern bool all_textures_loaded; // Set to `true` if all textures loaded, otherwise `false`
-
-	// Set to `true` if SDL2 is running, otherwise `false`
-	// `sdl::handle_events()` must be called for this to be properly tracked
-	// Use this for game loop.
-	// `while (sdl::running) {}`
-	extern bool running; 
-						
-	// Check if left clicked
-	// `sdl::handle_events()` must be called for this to be properly tracked
-	extern bool left_clicked; 
-
-	// Check if right clicked
-	// `sdl::handle_events()` must be called for this to be properly tracked
-	extern bool right_clicked; 
-
-	// Track mouse `x`, `y` coordinates
-	// `sdl::handle_events()` must be called for this to be properly tracked
-	extern SDL_Point mouse_pos; 
+	typedef SDL_Color color_t;
 
 	namespace colors
 	{
-		const SDL_Color BLACK = { 0, 0, 0, 255 };
-		const SDL_Color WHITE = { 255, 255, 255, 255 };
-		const SDL_Color RED = { 255, 0, 0, 255 };
-		const SDL_Color GREEN = { 0, 255, 0, 255 };
-		const SDL_Color BLUE = { 0, 0, 255, 255 };
-		const SDL_Color YELLOW = { 255, 255, 0, 255 };
-		const SDL_Color CYAN = { 0, 255, 255, 255 };
-		const SDL_Color MAGENTA = { 255, 0, 255, 255 };
-		const SDL_Color GRAY = { 128, 128, 128, 255 };
-		const SDL_Color ORANGE = { 255, 165, 0, 255 };
-		const SDL_Color BROWN = { 139,  69,  19, 255 };
-		const SDL_Color PINK = { 255, 192, 203, 255 };
-		const SDL_Color PURPLE = { 128, 0, 128, 255 };
-		const SDL_Color VIOLET = { 238, 130, 238, 255 };
-		const SDL_Color INDIGO = { 75, 0, 130, 255 };
-		const SDL_Color GOLD = { 255, 215, 0, 255 };
-		const SDL_Color SILVER = { 192, 192, 192, 255 };
-		const SDL_Color MAROON = { 128, 0, 0, 255 };
-		const SDL_Color OLIVE = { 128, 128, 0, 255 };
-		const SDL_Color TEAL = { 0, 128, 128, 255 };
-		const SDL_Color NAVY = { 0, 0, 128, 255 };
-		const SDL_Color LAVENDER = { 230, 230, 250, 255 };
-		const SDL_Color BEIGE = { 245, 245, 220, 255 };
-		const SDL_Color TURQUOISE = { 64, 224, 208, 255 };
-		const SDL_Color SALMON = { 250, 128, 114, 255 };
-		const SDL_Color CRIMSON = { 220,  20,  60, 255 };
-		const SDL_Color CORAL = { 255, 127,  80, 255 };
-		const SDL_Color MINT = { 189, 252, 201, 255 };
-		const SDL_Color PEACH = { 255, 218, 185, 255 };
-		const SDL_Color CHARTREUSE = { 127, 255, 0, 255 };
-		const SDL_Color AQUAMARINE = { 127, 255, 212, 255 };
-		const SDL_Color LIME = { 0, 255, 0, 255 };
-		const SDL_Color TOMATO = { 255,  99,  71, 255 };
-		const SDL_Color WHEAT = { 245, 222, 179, 255 };
+		const color_t BLACK = { 0, 0, 0, 255 };
+		const color_t WHITE = { 255, 255, 255, 255 };
+		const color_t RED = { 255, 0, 0, 255 };
+		const color_t GREEN = { 0, 255, 0, 255 };
+		const color_t BLUE = { 0, 0, 255, 255 };
+		const color_t YELLOW = { 255, 255, 0, 255 };
+		const color_t CYAN = { 0, 255, 255, 255 };
+		const color_t MAGENTA = { 255, 0, 255, 255 };
+		const color_t GRAY = { 128, 128, 128, 255 };
+		const color_t ORANGE = { 255, 165, 0, 255 };
+		const color_t BROWN = { 139,  69,  19, 255 };
+		const color_t PINK = { 255, 192, 203, 255 };
+		const color_t PURPLE = { 128, 0, 128, 255 };
+		const color_t VIOLET = { 238, 130, 238, 255 };
+		const color_t INDIGO = { 75, 0, 130, 255 };
+		const color_t GOLD = { 255, 215, 0, 255 };
+		const color_t SILVER = { 192, 192, 192, 255 };
+		const color_t MAROON = { 128, 0, 0, 255 };
+		const color_t OLIVE = { 128, 128, 0, 255 };
+		const color_t TEAL = { 0, 128, 128, 255 };
+		const color_t NAVY = { 0, 0, 128, 255 };
+		const color_t LAVENDER = { 230, 230, 250, 255 };
+		const color_t BEIGE = { 245, 245, 220, 255 };
+		const color_t TURQUOISE = { 64, 224, 208, 255 };
+		const color_t SALMON = { 250, 128, 114, 255 };
+		const color_t CRIMSON = { 220,  20,  60, 255 };
+		const color_t CORAL = { 255, 127,  80, 255 };
+		const color_t MINT = { 189, 252, 201, 255 };
+		const color_t PEACH = { 255, 218, 185, 255 };
+		const color_t CHARTREUSE = { 127, 255, 0, 255 };
+		const color_t AQUAMARINE = { 127, 255, 212, 255 };
+		const color_t LIME = { 0, 255, 0, 255 };
+		const color_t TOMATO = { 255,  99,  71, 255 };
+		const color_t WHEAT = { 245, 222, 179, 255 };	
 
 		// Returns a vector of primary colors
-		std::vector<SDL_Color> get_primary();
+		std::vector<color_t> get_primary();
 
 		// Returns a vector of secondary colors
-		std::vector<SDL_Color> get_secondary();
+		std::vector<color_t> get_secondary();
 
 		// Returns a vector of both primary and colors
-		std::vector<SDL_Color> get_foundational();
+		std::vector<color_t> get_foundational();
 
 		// Returns a vector of all the colors
-		std::vector<SDL_Color> get_all();
+		std::vector<color_t> get_all();
 	};
 
-	class ttf
-	{
-	public:
-		ttf() = default;
-		ttf(const std::string message, SDL_Color color, TTF_Font* font, uint8_t alpha = 255, SDL_Point pos = {0,0});
-		~ttf();
-
-		/* Create a piece of text
-		*
-		* \param message The text to be displayed
-		* \param pos The x, y coordinates of the text
-		* \param color The color of the text
-		* \param font The font (to be initialized manually)
-		* \param alpha Alpha value for transparency
-		*/
-		void create(const std::string message, SDL_Color color, TTF_Font* font, uint8_t alpha = 255, SDL_Point pos = {0,0});
-
-		// Get destination values of text
-		// This only works after it's been created or edited. 
-		SDL_Rect get_dst();
-
-		// Edit the displayed text
-		// \param message The text message 
-		void edit_text(const std::string message);
-
-		// Edit the blend transparency
-		// \param The alpha value for transparency
-		void edit_alpha(uint8_t alpha);
-
-		// Edit the text position
-		// \param The `x`, `y` coordinates of the text
-		void edit_position(SDL_Point pos);
-
-		// Edit the text position
-		// \param The `x`, `y` coordinates of the text
-		void edit_position(int x, int y);
-
-		// Edit the color
-		// \param color The color
-		void edit_color(SDL_Color color);
-
-		/* Edit the position, color, the displayed text and alpha value
-		* \param message The text to be displayed
-		* \param pos The x, y coordinates of the text
-		* \param color The color of the text
-		* \param alpha Alpha value for transparency
-		*/
-		void edit(const std::string message, SDL_Color color, uint8_t alpha = 255, SDL_Point pos = {0,0});
-
-		// Render the text
-		void render();
-
-		// Check if the mouse hovered over the asset
-		bool mouse_hovered();
-
-		// Check if the mouse left clicked over the asset
-		bool mouse_clicked_left();
-
-		// Check if the mouse right clicked over the asset
-		bool mouse_clicked_right();
-
-	private:
-		std::string m_message;
-		SDL_Texture* m_texture;
-		SDL_Rect m_dst;
-		TTF_Font* m_font;
-		SDL_Color m_color;
-		uint8_t m_alpha;
-	};
-
-	struct rect
+	struct rect_t
 	{
 		int x, y;
 		int w, h;
 
-		rect() = default;
-		rect(int x, int y, int w, int h, SDL_Color color = colors::BLACK);
+		rect_t() = default;
+		rect_t(int x, int y, int w, int h, color_t color = colors::BLACK);
 
 		// Edit the color of the rectangle
-		void edit_color(SDL_Color color);
+		void edit_color(const color_t& color);
 
 		// Edit the properties of the rectangle
 		void edit_properties(int x, int y, int w, int h);
@@ -178,62 +86,192 @@ namespace sdl
 		bool mouse_hovered();
 
 		// Mouse left clicked over rectangle
-		bool mouse_clicked_left();
+		bool left_clicked();
 
 		// Mouse right clicked over rectangle
-		bool mouse_clicked_right();
+		bool right_clicked();
 
 		// Rectangle collided with a type Rect
-		bool collided_width(rect rect);
+		bool collided_width(const rect_t& rect) const;
 
 		// Rectangle collided with a type SDL_Rect
-		bool collided_with(SDL_Rect rect);
+		bool collided_with(const SDL_Rect& rect) const;
 
 		// Converts type rect to SDL_Rect 
-		SDL_Rect c_rec();
+		SDL_Rect c_rec() const;
 
 	private:
-		SDL_Color m_color;
+		color_t m_color;
 	};
 
-	struct texture
+	struct texture_t
 	{
-		texture() = default;
-		texture(const std::string filepath);
-		~texture();
+		texture_t() = default;
+		texture_t(const std::string& filepath);
+		~texture_t();
+
+		texture_t(const texture_t&) = delete; 
+		texture_t& operator=(const texture_t&) = delete; 
+
+		texture_t(texture_t&& old) noexcept;
+		texture_t& operator=(texture_t&& old) noexcept;
 
 		// Load the texture as a chosen image
 		//\param filepath The filepath to the image
-		void load(const std::string filepath);
+		void load(const std::string& filepath);
+
+		// Get the filepath
+		const std::string get_filepath();
 
 		// Render the texture onto screen with the option to flip it 
 		//\param src Properties of the source image
 		//\param dst Properties of the image to be rendered on screen
 		//\param alpha Alpha value for transparency
 		//\param flip Variable that tracks when a flip occurs 
-		void render(SDL_Rect& src, SDL_Rect& dst, uint8_t alpha = 255, SDL_RendererFlip flip = SDL_FLIP_NONE);
+		void render(const SDL_Rect& src, const SDL_Rect& dst, uint8_t alpha = 255, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
 		// Render the texture onto screen with the option to flip it 
 		//\param src Properties of the source image
 		//\param dst Properties of the image to be rendered on screen
 		//\param alpha Alpha value for transparency
 		//\param flip Variable that tracks when a flip occurs 
-		void render(rect& src, rect& dst, uint8_t alpha = 255, SDL_RendererFlip flip = SDL_FLIP_NONE);
+		void render(const rect_t& src, const rect_t& dst, uint8_t alpha = 255, SDL_RendererFlip flip = SDL_FLIP_NONE);
+
+		// Get the raw SDL_Texture*
+		SDL_Texture*& get_raw();
 
 	private:
 		SDL_Texture* m_sdl_texture = nullptr;
+		std::string m_filepath;
+	};
+
+	struct font_t
+	{
+		font_t() = default;
+		font_t(const std::string& filepath, int size);
+		~font_t();
+
+		font_t(const font_t&) = delete; 
+		font_t& operator=(const font_t&) = delete; 
+
+		font_t(font_t&& old) noexcept;
+		font_t& operator=(font_t&& old) noexcept;
+
+		// Load font
+		void load_font(const std::string& filepath, int size);
+
+		// Change font
+		void change_font(const std::string& filepath, int size);
+
+		// Get the raw TTF_Font* 
+		TTF_Font* get_raw();
+		
+	private:
+		TTF_Font* m_ttf_font = nullptr;
+	};
+
+	struct text_t
+	{
+		SDL_RendererFlip flip = SDL_FLIP_NONE;
+
+		text_t() = default;
+		text_t(const std::string& message, const color_t& color, font_t& font, uint8_t alpha = 255, SDL_Point pos = {0,0});
+		~text_t() = default;
+
+		text_t(const text_t&) = delete; 
+		text_t& operator=(const text_t&) = delete; 
+
+		text_t(text_t&& old) noexcept;
+		text_t& operator=(text_t&& old) noexcept;
+
+		/* Create a piece of text
+		*
+		* \param message The text to be displayed
+		* \param pos The x, y coordinates 
+		* \param color The color 
+		* \param font The font 
+		* \param alpha Alpha value for transparency
+		*/
+		void create(const std::string& message, const color_t& color, font_t& font, uint8_t alpha = 255, SDL_Point pos = {0,0});
+
+		// Get destination values of text
+		// This only works after it's been created or edited. 
+		rect_t get_dst() const;
+
+		// Edit the displayed text
+		// \param message The text message 
+		void edit_text(const std::string& message);
+
+		// Edit the blend transparency
+		// \param The alpha value for transparency
+		void edit_alpha(uint8_t alpha);
+
+		// Edit the text position
+		// \param The `x`, `y` coordinates 
+		void edit_position(const SDL_Point& pos);
+
+		// Edit the text position
+		// \param The `x`, `y` coordinates 
+		void edit_position(int x, int y);
+
+		// Edit the text font
+		// \param The font
+		void edit_font(font_t& font);
+
+		// Edit the text font
+		// \param The font details
+		void edit_font(const std::string& filepath, int size);
+
+		// Edit the color
+		// \param color The color
+		void edit_color(const color_t& color);
+
+		/* Edit the position, color, the displayed text and alpha value
+		* \param message The text to be displayed
+		* \param pos The x, y coordinates 
+		* \param color The color 
+		* \param font The font 
+		* \param alpha Alpha value for transparency
+		*/
+		void edit(const std::string& message, const color_t& color, font_t& font, uint8_t alpha = 255, std::optional<SDL_Point> pos = std::nullopt);
+
+		// Render the text
+		void render();
+
+		// Check if the mouse hovered over the asset
+		bool mouse_hovered();
+
+		// Check if the mouse left clicked over the asset
+		bool left_clicked();
+
+		// Check if the mouse right clicked over the asset
+		bool right_clicked();
+
+	private:
+		std::string m_message;
+		texture_t m_texture;
+		font_t* m_font = nullptr;
+		rect_t m_dst;
+		color_t m_color;
+		uint8_t m_alpha;
 	};
 
 	namespace asset
 	{
 		// Bckgrounds or overlays that cover the entire screen
-		struct background
+		struct background_t
 		{
-			background();
+			background_t();
+
+			background_t(const background_t&) = delete;
+			background_t& operator = (const background_t&) = delete;
+			
+			background_t(background_t&& old) noexcept = default;
+			background_t& operator = (background_t&& old) noexcept = default;
 
 			// Load the texture as a chosen image
 			//\param filepath The filepath to the image
-			void load_texture(const std::string filepath);
+			void load_texture(const std::string& filepath);
 
 			// Render the texture onto screen with the option to flip it 
 			//\param alpha Alpha value for transparency
@@ -241,17 +279,24 @@ namespace sdl
 			void render(uint8_t alpha = 255, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
 		private:
-			texture m_texture;
-			SDL_Rect m_source;
-			SDL_Rect m_destination;
+			texture_t m_texture;
+			rect_t m_source;
+			rect_t m_destination;
 		};
 
-		// Any entity or item with a custom size
-		struct entity
+		struct asset_t
 		{
-			// Load the texture as a chosen image
-			//\param filepath The filepath to the image
-			void load_texture(const std::string filepath);
+			int x, y;
+			int w, h;
+			SDL_RendererFlip flip = SDL_FLIP_NONE;
+
+			asset_t() = default;
+
+			asset_t(const asset_t&) = delete;
+			asset_t& operator = (const asset_t&) = delete;
+			
+			asset_t(asset_t&& old) noexcept = default;
+			asset_t& operator = (asset_t&& old) noexcept = default;
 
 			// Set the src values of the image
 			//\param x The x coordinate of the image source
@@ -268,49 +313,89 @@ namespace sdl
 			void set_dst(int x, int y, int w, int h);
 
 			// Set the src values of the image
-			void set_src(SDL_Rect src);
+			void set_src(const SDL_Rect& src);
 
 			// Set the dst values of the image 
-			void set_dst(SDL_Rect dst);
+			void set_dst(const SDL_Rect& dst);
 
 			// Set the src values of the image
-			void set_src(rect src);
+			void set_src(const rect_t& src);
 
 			// Set the dst values of the image 
-			void set_dst(rect dst);
+			void set_dst(const rect_t& dst);
 
-			// Get the entity's dst values 
-			rect get_dst();
+			// Get the asset's src values 
+			rect_t get_src() const;
 
-			// Render the entity's texture onto screen with the option to flip it 
-			//\param alpha Alpha value for transparency 
-			//\param flip Variable that tracks when a flip occurs
-			void render(uint8_t alpha = 255, SDL_RendererFlip flip = SDL_FLIP_NONE);
+			// Get the asset's dst values 
+			rect_t get_dst() const;
 
 			// Check if the mouse hovered over the asset
 			bool mouse_hovered();
 
 			// Check if the mouse left clicked over the asset
-			bool mouse_clicked_left();
+			bool left_clicked();
 
 			// Check if the mouse right clicked over the asset
-			bool mouse_clicked_right();
+			bool right_clicked();
 
-			// Rectangle collided with a type Rect
-			bool collided_with(entity& entity);
+			// Rectangle collided with a type asset_t
+			bool collided_with(const asset_t& asset);
 
-			// Rectangle collided with a type Rect
-			bool collided_with(rect rect);
+			// Rectangle collided with a type rect_t
+			bool collided_with(const rect_t& rect);
 
 			// Rectangle collided with a type SDL_Rect
-			bool collided_with(SDL_Rect rect);
+			bool collided_with(const SDL_Rect& rect);
+
+		protected:
+			rect_t m_source;
+			rect_t m_destination;
+		};
+
+		// A static texture with custom dimensions
+		struct item_t : public asset_t
+		{
+			// Load the texture as a chosen image
+			//\param filepath The filepath to the image
+			void load_texture(const std::string& filepath);
+
+			// Render the entity's texture onto screen 
+			//\param alpha Alpha value for transparency 
+			void render(uint8_t alpha = 255);
 
 		private:
-			texture m_texture;
-			SDL_Rect m_source;
-			SDL_Rect m_destination;
+			texture_t m_texture;
 		};
+
+		// Dynamically sized textures for an entity, best for animations
+		struct entity_t : public asset_t
+		{
+			float vel_x = 0.0f;
+			float vel_y = 0.0f;
+			int animation_index = 0;
+
+			// Add a texture as a chosen image
+			//\param filepath The filepath to the image
+			void add_texture(const std::string& filepath);
+
+			// Delete the animation
+			void delete_animation();
+
+			// Assign an animation
+			void set_animation(std::vector<texture_t>& animation);
+			
+			// Render the entity's texture onto screen 
+			//\param alpha Alpha value for transparency 
+			void render(uint8_t alpha = 255);
+
+		private:
+			std::vector<texture_t> m_textures;
+		};
+
+
 	};
+
 
 	namespace render
 	{
@@ -321,29 +406,29 @@ namespace sdl
 		void present();
 
 		// Render a color to the renderer
-		void color(const SDL_Color color);
+		void color(const color_t& color);
 	};
 
 	namespace mouse
 	{
 		// Check if the mouse hovered over any rectangle
-		bool hovered(SDL_Rect& rect);
+		bool hovered(const SDL_Rect& rect);
 
 		// Check if the mouse left clicked on any rectangle 
-		bool clicked_left(SDL_Rect& rect);
+		bool clicked_left(const SDL_Rect& rect);
 
 		// Check if the mouse right clicked on any rectangle 
-		bool clicked_right(SDL_Rect& rect);
+		bool clicked_right(const SDL_Rect& rect);
 
 
 		// Check if the mouse hovered over any rectangle
-		bool hovered(rect& rect);
+		bool hovered(const rect_t& rect);
 
 		// Check if the mouse left clicked on any rectangle 
-		bool clicked_left(rect& rect);
+		bool clicked_left(const rect_t& rect);
 
 		// Check if the mouse right clicked on any rectangle 
-		bool clicked_right(rect& rect);
+		bool clicked_right(const rect_t& rect);
 	};
 
 	namespace keys
@@ -367,32 +452,42 @@ namespace sdl
 
 	namespace audio
 	{
-		struct sound
+		struct sound_t
 		{
-			bool is_paused = false; // Check if sound is paused or not
+			sound_t() = default;
+			sound_t(const std::string& filepath, int channel);
+			~sound_t();
 
-			sound() = default;
-			sound(const std::string filepath);
-			~sound();
+			sound_t(const sound_t&) = delete; 
+			sound_t& operator=(const sound_t&) = delete; 
+
+			sound_t(sound_t&& old) noexcept;
+			sound_t& operator=(sound_t&& old) noexcept;
 
 			// Load the sound
-			void load_sound(const std::string filepath);
+			void load_sound(const std::string& filepath);
 
 			// Get filepath
-			std::string get_filepath();
+			const std::string get_filepath();
 
 			// Change channel (-1 by default)
 			// Note that the change only happens the next time you call `sdl::audio::sound::play()`, whatever was being played before this function call will stay in that channel
 			void change_channel(int channel);
 
+			// Check if the channel it is assigned to is currently playing
+			bool channel_is_playing();
+
 			// Adjust volume (128 by default)
 			void adjust_volume(int volume);
 
 			// Get the channel sound is current being played in
-			int get_channel();
+			int get_channel() const;
 
 			// Get current volume
-			int get_volume();
+			int get_volume() const;
+
+			// Check if sound is currently paused
+			bool is_paused();
 
 			// Play the sound
 			void play(int loops = 0);
@@ -407,23 +502,28 @@ namespace sdl
 			void resume();
 
 		private:
-			Mix_Chunk* m_sound;
+			Mix_Chunk* m_sound = nullptr;
 			int m_channel = -1;
 			int m_volume = 128;
 			std::string m_filepath;
+			bool m_paused = false; 
 
 		};
 
-		struct music
+		struct music_t
 		{
-			bool is_paused = false; // Check if music is paused or not
+			music_t() = default;
+			music_t(const std::string& filepath);
+			~music_t();
 
-			music() = default;
-			music(const std::string filepath);
-			~music();
+			music_t(const music_t&) = delete; 
+			music_t& operator=(const music_t&) = delete; 
+
+			music_t(music_t&& old) noexcept;
+			music_t& operator=(music_t&& old) noexcept;
 
 			// Load the music
-			void load_music(const std::string filepath);
+			void load_music(const std::string& filepath);
 
 			// Get filepath
 			std::string get_filepath();
@@ -435,11 +535,14 @@ namespace sdl
 			void adjust_volume(int volume);
 
 			// Get current volume
-			int get_volume();
+			int get_volume() const;
 
 			// Check if music is currently on track 
 			// Whether it is paused is irrelevant, this solely checks if it is the current track on.
 			bool is_on();
+
+			// Check if music is currently paused
+			bool is_paused();
 
 			// Stop the music
 			void stop();
@@ -451,14 +554,15 @@ namespace sdl
 			void resume();
 
 		private:
-			Mix_Music* m_music;
+			Mix_Music* m_music = nullptr;
 			int m_volume = 128;
-			std::string m_filepath; // for debugging
+			std::string m_filepath; 
+			bool m_paused = false; 
 		};
 	}
 
 	// Initialize all the resources for SDL2 API
-	void init(const std::string title, int width, int height, Uint32 flags);
+	void init(const std::string& title, int width, int height, Uint32 flags);
 
 	// Destroy and clean up all the resources for SDL2 API
 	void cleanup();
@@ -467,11 +571,44 @@ namespace sdl
 	void handle_events();
 
 	// Check collisions between 2 rectangles
-	bool check_collisions(SDL_Rect rectA, SDL_Rect rectB);
+	bool check_collisions(const SDL_Rect& rectA, const SDL_Rect& rectB);
 
 	// Check collisions between 2 rectangles
-	bool check_collisions(rect rectA, rect rectB);
+	bool check_collisions(const rect_t& rectA, const rect_t& rectB);
+
+	// Check what the ASCII character user typed
+	std::string get_character_input();
+
+	// Check if the user entered a character
+	bool character_is_typed();
+
+	// Returns `true` if all textures loaded, otherwise `false`
+	bool textures_loaded();
+
+	// Check if left clicked
+	// `sdl::handle_events()` must be called for this to be properly tracked
+	bool left_clicked();
+
+	// Check if right clicked
+	// `sdl::handle_events()` must be called for this to be properly tracked
+	bool right_clicked();
+
+	// Returns mouse `x`, `y` coordinates
+	// `sdl::handle_events()` must be called for this to be properly tracked
+	SDL_Point get_mousepos();
+
+	// Returns `true` if SDL2 is running, otherwise `false`
+	// `sdl::handle_events()` must be called for this to be properly tracked
+	// Use this for game loop.
+	// `while (sdl::running()) {}`
+	bool running();
 
 	// Call core update at the very end of the game loop
 	void update();
+
+	// Returns the game renderer
+	// Only call if you want to do something explicitly with the renderer itself
+	// Otherwise, this method should preferably never be called
+	// Do not destroy the renderer during the lifetime of this application
+	SDL_Renderer* get_renderer();
 };
