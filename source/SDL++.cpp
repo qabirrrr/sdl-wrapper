@@ -22,6 +22,14 @@ namespace sdl
 	std::string g_character = "";
 	bool g_char_typed = false;
 
+	bool color_t::operator==(const color_t& other) const
+	{
+		return
+		r == other.r &&
+		g == other.g &&
+		b == other.b;
+	}
+
 	namespace colors 
 	{
 		std::vector<color_t> get_primary()
@@ -112,6 +120,16 @@ namespace sdl
 		edit_properties(x, y, w, h);
 		edit_color(color);
 	}
+
+	bool rect_t::operator==(const rect_t& other) const
+	{
+		return
+		x == other.x &&
+		y == other.y &&
+		w == other.w &&
+		h == other.h;
+	}
+
 	void rect_t::edit_color(const color_t& color)
 	{
 		m_color.r = color.r;
@@ -233,6 +251,17 @@ namespace sdl
 			std::cout << "Error: " << IMG_GetError() << '\n';
 		}
 		SDL_SetTextureBlendMode(m_sdl_texture, SDL_BLENDMODE_BLEND);
+	}
+
+	void texture_t::change(texture_t& texture)
+	{
+		m_filepath = texture.get_filepath();
+		if (m_sdl_texture)
+		{
+			SDL_DestroyTexture(m_sdl_texture);
+			m_sdl_texture = nullptr;
+		}
+		m_sdl_texture = texture.get_raw();
 	}
 
 	const std::string texture_t::get_filepath()
@@ -377,8 +406,15 @@ namespace sdl
 		int text_height;
 		SDL_Surface* surface;
 
-		surface = TTF_RenderText_Blended(m_font->get_raw(), message.c_str(), color);
 		SDL_Texture*& tex = m_texture.get_raw();
+		tex = nullptr;
+
+		if (m_message.length() == 0)
+		{
+			return;
+		}
+
+		surface = TTF_RenderText_Blended(m_font->get_raw(), message.c_str(), color);
 		tex = SDL_CreateTextureFromSurface(g_renderer, surface);
 		text_width = surface->w;
 		text_height = surface->h;
@@ -390,12 +426,7 @@ namespace sdl
 		m_dst.h = text_height;
 	}
 
-	rect_t text_t::get_dst() const
-	{
-		return m_dst;
-	}
-
-	void text_t::edit_text(const std::string& message)
+	void text_t::edit_message(const std::string& message)
 	{
 		m_message = message;
 
@@ -404,6 +435,11 @@ namespace sdl
 		{
 			SDL_DestroyTexture(tex);
 			tex = nullptr;
+		}
+
+		if (m_message.length() == 0)
+		{
+			return;
 		}
 
 		int text_width;
@@ -452,6 +488,11 @@ namespace sdl
 			tex = nullptr;
 		}
 
+		if (m_message.length() == 0)
+		{
+			return;
+		}
+
 		int text_width;
 		int text_height;
 		SDL_Surface* surface;
@@ -477,6 +518,11 @@ namespace sdl
 		{
 			SDL_DestroyTexture(tex);
 			tex = nullptr;
+		}
+
+		if (m_message.length() == 0)
+		{
+			return;
 		}
 
 		int text_width;
@@ -507,11 +553,23 @@ namespace sdl
 		m_alpha = alpha;
 		m_font = &font;
 
+		if (pos.has_value()) // user put argument
+		{
+			SDL_Point pos_unwrapped = pos.value();
+			m_dst.x = pos_unwrapped.x;
+			m_dst.y = pos_unwrapped.y;
+		}
+
 		SDL_Texture*& tex = m_texture.get_raw();
 		if (tex != nullptr)
 		{
 			SDL_DestroyTexture(tex);
 			tex = nullptr;
+		}
+
+		if (m_message.length() == 0)
+		{
+			return;
 		}
 
 		int text_width;
@@ -527,12 +585,6 @@ namespace sdl
 		SDL_SetTextureBlendMode(tex, SDL_BLENDMODE_BLEND);
 		SDL_SetTextureAlphaMod(tex, alpha);
 
-		if (pos.has_value()) // user put argument
-		{
-			SDL_Point pos_unwrapped = pos.value();
-			m_dst.x = pos_unwrapped.x;
-			m_dst.y = pos_unwrapped.y;
-		}
 		m_dst.w = text_width;
 		m_dst.h = text_height;
 	}
@@ -563,6 +615,26 @@ namespace sdl
 	bool text_t::right_clicked()
 	{
 		return mouse::clicked_right(m_dst);
+	}
+
+	const std::string text_t::get_message() const
+	{
+		return m_message;
+	}
+
+	rect_t text_t::get_dst() const
+	{
+		return m_dst;
+	}
+
+	color_t text_t::get_color() const
+	{
+		return m_color;
+	}
+
+	uint8_t text_t::get_alpha() const
+	{
+		return m_alpha;
 	}
 
 	
@@ -686,13 +758,17 @@ namespace sdl
 
 
 
-		void item_t::load_texture(const std::string& filepath)
+
+		void spritesheet_t::insert_spritesheet(texture_t& texture)
 		{
-			m_texture.load(filepath);
+			m_texture = &texture;
 		}
 
-		void item_t::render(uint8_t alpha)
+		void spritesheet_t::render(uint8_t alpha)
 		{
+			x += vel_x;
+			y += vel_y;
+
 			m_destination.x = x;
 			m_destination.y = y;
 			m_destination.w = w;
@@ -700,38 +776,37 @@ namespace sdl
 
 			if (flip == SDL_FLIP_NONE)
 			{
-				m_texture.render(m_source, m_destination, alpha);
+				m_texture->render(m_source, m_destination, alpha);
 			}
 			else
 			{
-				m_texture.render(m_source, m_destination, alpha, flip);
+				m_texture->render(m_source, m_destination, alpha, flip);
 			}
 		}
 
 
 
 
-		void entity_t::add_texture(const std::string& filepath)
+		void spritepack_t::add_sprite(const std::string& filepath)
 		{
 			m_textures.emplace_back(filepath);
 		}
 
-		void entity_t::delete_animation()
+		void spritepack_t::delete_spritepack()
 		{
 			m_textures.clear();  
-    		m_textures.shrink_to_fit(); 
 		}
 
-		void entity_t::set_animation(std::vector<texture_t>& animation)
+		void spritepack_t::insert_spritepack(std::vector<texture_t>& animation)
 		{
-			delete_animation();
+			delete_spritepack();
 			for (texture_t& frame : animation)
 			{
-				add_texture(frame.get_filepath());
+				add_sprite(frame.get_filepath());
 			}
 		}
 
-		void entity_t::render(uint8_t alpha)
+		void spritepack_t::render(uint8_t alpha)
 		{
 			x += vel_x;
 			y += vel_y;

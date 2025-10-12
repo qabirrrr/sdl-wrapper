@@ -10,7 +10,10 @@
 
 namespace sdl
 {
-	typedef SDL_Color color_t;
+	struct color_t : public SDL_Color
+	{
+		bool operator==(const color_t& other) const;
+	};
 
 	namespace colors
 	{
@@ -70,6 +73,8 @@ namespace sdl
 		rect_t() = default;
 		rect_t(int x, int y, int w, int h, color_t color = colors::BLACK);
 
+		bool operator==(const rect_t& other) const;
+
 		// Edit the color of the rectangle
 		void edit_color(const color_t& color);
 
@@ -119,6 +124,10 @@ namespace sdl
 		// Load the texture as a chosen image
 		//\param filepath The filepath to the image
 		void load(const std::string& filepath);
+
+		// Change texture
+		//\param texture The texture
+		void change(texture_t& texture);
 
 		// Get the filepath
 		const std::string get_filepath();
@@ -194,13 +203,9 @@ namespace sdl
 		*/
 		void create(const std::string& message, const color_t& color, font_t& font, uint8_t alpha = 255, SDL_Point pos = {0,0});
 
-		// Get destination values of text
-		// This only works after it's been created or edited. 
-		rect_t get_dst() const;
-
 		// Edit the displayed text
 		// \param message The text message 
-		void edit_text(const std::string& message);
+		void edit_message(const std::string& message);
 
 		// Edit the blend transparency
 		// \param The alpha value for transparency
@@ -247,6 +252,18 @@ namespace sdl
 		// Check if the mouse right clicked over the asset
 		bool right_clicked();
 
+		// Get message of text
+		const std::string get_message() const;
+
+		// Get destination values of text
+		rect_t get_dst() const;
+
+		// Get color of text
+		color_t get_color() const;
+
+		// Get alpha value of text
+		uint8_t get_alpha() const;
+
 	private:
 		std::string m_message;
 		texture_t m_texture;
@@ -288,6 +305,8 @@ namespace sdl
 		{
 			int x, y;
 			int w, h;
+			float vel_x = 0.0f;
+			float vel_y = 0.0f;
 			SDL_RendererFlip flip = SDL_FLIP_NONE;
 
 			asset_t() = default;
@@ -353,37 +372,35 @@ namespace sdl
 			rect_t m_destination;
 		};
 
-		// A static texture with custom dimensions
-		struct item_t : public asset_t
+		// This is best for animations stored in a singular spritesheet.
+		struct spritesheet_t : public asset_t
 		{
-			// Load the texture as a chosen image
-			//\param filepath The filepath to the image
-			void load_texture(const std::string& filepath);
+			// Insert the texture
+			//\param texture The texture
+			void insert_spritesheet(texture_t& texture);
 
 			// Render the entity's texture onto screen 
 			//\param alpha Alpha value for transparency 
 			void render(uint8_t alpha = 255);
 
 		private:
-			texture_t m_texture;
+			texture_t* m_texture = nullptr;
 		};
 
-		// Dynamically sized textures for an entity, best for animations
-		struct entity_t : public asset_t
+		// This is best for animations stored in numerous sprite files
+		struct spritepack_t : public asset_t
 		{
-			float vel_x = 0.0f;
-			float vel_y = 0.0f;
 			int animation_index = 0;
 
 			// Add a texture as a chosen image
 			//\param filepath The filepath to the image
-			void add_texture(const std::string& filepath);
+			void add_sprite(const std::string& filepath);
 
 			// Delete the animation
-			void delete_animation();
+			void delete_spritepack();
 
 			// Assign an animation
-			void set_animation(std::vector<texture_t>& animation);
+			void insert_spritepack(std::vector<texture_t>& animation);
 			
 			// Render the entity's texture onto screen 
 			//\param alpha Alpha value for transparency 
