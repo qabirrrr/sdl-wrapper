@@ -648,6 +648,13 @@ namespace sdl
 			m_destination = { 0, 0, g_width, g_height };
 		}
 
+		background_t::background_t(const std::string& filepath)
+		{
+			m_source = { 0, 0, g_width, g_height };
+			m_destination = { 0, 0, g_width, g_height };
+			load_texture(filepath);
+		}
+
 		void background_t::load_texture(const std::string& filepath)
 		{
 			m_texture.load(filepath);

@@ -279,6 +279,7 @@ namespace sdl
 		struct background_t
 		{
 			background_t();
+			background_t(const std::string& filepath);
 
 			background_t(const background_t&) = delete;
 			background_t& operator = (const background_t&) = delete;
