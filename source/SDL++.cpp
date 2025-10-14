@@ -1,4 +1,4 @@
-#include "../include/SDL++.h"
+#include "../../include/SDL++"
 #include <iostream>
 #include <cstring>
 #include <optional>
