@@ -7,15 +7,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(BASE_PATH "C:/SDL2++/Base")
 
 # Library
-add_library(SDLpp STATIC source/SDL++.cpp)
-target_include_directories(SDLpp PUBLIC
+add_library(SDL2++ STATIC source/SDL++.cpp)
+target_include_directories(SDL2++ PUBLIC
     ${PROJECT_SOURCE_DIR}/include
     ${BASE_PATH}/include
 )
 link_directories(
     ${BASE_PATH}/lib
 )
-set_target_properties(SDLpp PROPERTIES VERSION ${PROJECT_VERSION})
+set_target_properties(SDL2++ PROPERTIES VERSION ${PROJECT_VERSION} ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}")
 
 # Optional: link directories if needed for library dependencies
 link_directories(${BASE_PATH}/lib)
