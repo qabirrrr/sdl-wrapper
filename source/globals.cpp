@@ -1,4 +1,4 @@
-#include "../../include/SDL++ (Globals)"
+#include "../../include/globals"
 
 namespace sdl 
 {
