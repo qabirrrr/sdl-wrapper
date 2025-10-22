@@ -249,12 +249,12 @@ namespace sdl
 
 	bool text_t::left_clicked()
 	{
-		return mouse::clicked_left(m_dst);
+		return mouse::left_clicked(m_dst);
 	}
 
 	bool text_t::right_clicked()
 	{
-		return mouse::clicked_right(m_dst);
+		return mouse::right_clicked(m_dst);
 	}
 
 	const std::string text_t::get_message() const

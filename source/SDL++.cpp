@@ -6,7 +6,7 @@ namespace sdl
 {
 	void init(const std::string& title, int width, int height, Uint32 flags)
 	{
-		bool canInit = true;
+		bool can_init = true;
 		g_width = width;
 		g_height = height;
 
@@ -14,30 +14,30 @@ namespace sdl
 
 		if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
 		{
-			if (canInit)
+			if (can_init)
 			{
 				std::cout << "API failed to load\n";
-				canInit = false;
+				can_init = false;
 			}
 			std::cout << "Error (SDL): " << SDL_GetError() << '\n';
 		}
 
 		if (TTF_Init())
 		{
-			if (canInit)
+			if (can_init)
 			{
 				std::cout << "API failed to load\n";
-				canInit = false;
+				can_init = false;
 			}
 			std::cout << "Error (TTF): " << SDL_GetError() << '\n';
 		}
 
 		if (Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096) == -1)
 		{
-			if (canInit)
+			if (can_init)
 			{
 				std::cout << "API failed to load\n";
-				canInit = false;
+				can_init = false;
 			}
 			std::cout << "Error (Mixer): " << SDL_GetError() << '\n';
 		}
@@ -45,10 +45,10 @@ namespace sdl
 		g_window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, flags);
 		if (g_window == nullptr)
 		{
-			if (canInit)
+			if (can_init)
 			{
 				std::cout << "API failed to load\n";
-				canInit = false;
+				can_init = false;
 			}
 			std::cout << "Error (Window): " << SDL_GetError() << '\n';
 		}
@@ -57,10 +57,10 @@ namespace sdl
 		g_renderer = SDL_CreateRenderer(g_window, -1, rf);
 		if (g_renderer == nullptr)
 		{
-			if (canInit)
+			if (can_init)
 			{
 				std::cout << "API failed to load\n";
-				canInit = false;
+				can_init = false;
 			}
 			std::cout << "Error (Renderer): " << SDL_GetError() << '\n';
 		}

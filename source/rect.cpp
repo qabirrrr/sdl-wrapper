@@ -61,13 +61,13 @@ namespace sdl
 	bool rect_t::left_clicked()
 	{
 		SDL_Rect rect = { x,y,w,h };
-		return mouse::clicked_left(rect);
+		return mouse::left_clicked(rect);
 	}
 
 	bool rect_t::right_clicked()
 	{
 		SDL_Rect rect = { x,y,w,h };
-		return mouse::clicked_right(rect);
+		return mouse::right_clicked(rect);
 	}
 
 

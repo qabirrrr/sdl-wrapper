@@ -104,12 +104,12 @@ namespace sdl
 
 		bool asset_t::left_clicked()
 		{
-			return mouse::clicked_left(m_destination);
+			return mouse::left_clicked(m_destination);
 		}
 
 		bool asset_t::right_clicked()
 		{
-			return mouse::clicked_right(m_destination);
+			return mouse::right_clicked(m_destination);
 		}
 
 		bool asset_t::collided_with(const asset_t& asset)
