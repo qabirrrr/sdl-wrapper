@@ -31,23 +31,25 @@ namespace sdl
 		return *this;
 	}
 
-	void font_t::load_font(const std::string& filepath, int size)
+	bool font_t::load_font(const std::string& filepath, int size)
 	{
 		m_ttf_font = TTF_OpenFont(filepath.c_str(), size);
 		if (!m_ttf_font)
 		{
 			std::cout << "Error (Font): " << TTF_GetError() << '\n';
+			return false;
 		}
+		return true;
 	}
 
-	void font_t::change_font(const std::string& filepath, int size)
+	bool font_t::change_font(const std::string& filepath, int size)
 	{
 		if (m_ttf_font)
 		{
 			TTF_CloseFont(m_ttf_font);
 			m_ttf_font = nullptr;
 		}
-		load_font(filepath, size);
+		return load_font(filepath, size);
 	}
 
 	TTF_Font* font_t::get_raw()

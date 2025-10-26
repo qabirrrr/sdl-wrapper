@@ -34,7 +34,7 @@ namespace sdl
 		return *this;
 	}
 
-	void texture_t::load(const std::string& filepath)
+	bool texture_t::load(const std::string& filepath)
 	{
 		m_filepath = filepath;
 		if (m_sdl_texture)
@@ -53,6 +53,12 @@ namespace sdl
 			std::cout << "Error: " << IMG_GetError() << '\n';
 		}
 		SDL_SetTextureBlendMode(m_sdl_texture, SDL_BLENDMODE_BLEND);
+
+		if (!g_textures_loaded)
+		{
+			return false;
+		}
+		return true;
 	}
 
 	void texture_t::change(texture_t& texture)

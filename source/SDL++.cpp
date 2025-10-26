@@ -4,7 +4,7 @@
 
 namespace sdl
 {
-	void init(const std::string& title, int width, int height, Uint32 flags)
+	bool init(const std::string& title, int width, int height, Uint32 flags)
 	{
 		bool can_init = true;
 		g_width = width;
@@ -68,6 +68,12 @@ namespace sdl
 		SDL_SetRenderDrawBlendMode(g_renderer, SDL_BLENDMODE_BLEND);
 
 		SDL_StartTextInput();
+
+		if (!can_init)
+		{
+			return false;
+		}
+		return true;
 	}
 
 	void cleanup()

@@ -40,14 +40,16 @@ namespace sdl
 			return *this;
 		}
 
-		void sound_t::load_sound(const std::string& filepath)
+		bool sound_t::load_sound(const std::string& filepath)
 		{
 			m_filepath = filepath;
 			m_sound = Mix_LoadWAV(m_filepath.c_str());
 			if (m_sound == nullptr)
 			{
 				std::cout << "Error (Loading sound): " << Mix_GetError() << '\n';
+				return false;
 			}
+			return true;
 		}
 
 		const std::string sound_t::get_filepath()
@@ -145,14 +147,16 @@ namespace sdl
 			return *this;
 		}
 
-		void music_t::load_music(const std::string& filepath)
+		bool music_t::load_music(const std::string& filepath)
 		{
 			m_filepath = filepath;
 			m_music = Mix_LoadMUS(m_filepath.c_str());
 			if (m_music == nullptr)
 			{
 				std::cout << "Error (Loading music): " << Mix_GetError() << '\n';
+				return false;
 			}
+			return true;
 		}
 
 		std::string music_t::get_filepath()
