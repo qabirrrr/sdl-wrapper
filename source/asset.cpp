@@ -1,6 +1,8 @@
 #include "../../include/asset"
 #include "../../include/globals"
 #include "../../include/sdl++"
+#include <memory>
+#include <iostream>
 
 namespace sdl 
 {
@@ -128,13 +130,44 @@ namespace sdl
 		}
 
 
+		spritesheet_t::~spritesheet_t()
+		{
+			if (m_allocated)
+			{
+				delete m_texture;
+				m_allocated = false;
+			}
+			m_texture = nullptr;
+		}
 
+		void spritesheet_t::load(const std::string& filepath)
+		{
+			if (!m_texture)
+			{
+				m_texture = new texture_t();
+				m_allocated = true;
+			}
+				
+			m_texture->load(filepath);
+		}
 
 		void spritesheet_t::insert_spritesheet(texture_t& texture)
 		{
+			if (m_texture)
+			{
+				if (m_allocated)
+				{
+					delete m_texture;
+					m_allocated = false;
+				}
+				m_texture = nullptr;
+			}
 			m_texture = &texture;
 		}
 
+
+		// The pointer logic in this struct is unsafe asf
+		// Just dont be a dumb bitch and call this when m_texture is null and all should be good
 		void spritesheet_t::render(uint8_t alpha)
 		{
 			x += vel_x;
