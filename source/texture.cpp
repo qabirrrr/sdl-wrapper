@@ -54,11 +54,7 @@ namespace sdl
 		}
 		SDL_SetTextureBlendMode(m_sdl_texture, SDL_BLENDMODE_BLEND);
 
-		if (!g_textures_loaded)
-		{
-			return false;
-		}
-		return true;
+		return g_textures_loaded;
 	}
 
 	void texture_t::change(texture_t& texture)

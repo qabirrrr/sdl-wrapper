@@ -69,11 +69,7 @@ namespace sdl
 
 		SDL_StartTextInput();
 
-		if (!can_init)
-		{
-			return false;
-		}
-		return true;
+		return can_init;
 	}
 
 	void cleanup()
