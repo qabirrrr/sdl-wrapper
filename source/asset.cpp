@@ -51,10 +51,10 @@ namespace sdl
 
 		void asset_t::set_dst(int x, int y, int w, int h)
 		{
-			this->x = x;
-			this->y = y;
-			this->w = w;
-			this->h = h;
+			m_destination.x = x;
+			m_destination.y = y;
+			m_destination.w = w;
+			m_destination.h = h;
 		}
 
 		void asset_t::set_src(const SDL_Rect& src)
@@ -67,10 +67,10 @@ namespace sdl
 
 		void asset_t::set_dst(const SDL_Rect& dst)
 		{
-			x = dst.x;
-			y = dst.y;
-			w = dst.w;
-			h = dst.h;
+			m_destination.x = dst.x;
+			m_destination.y = dst.y;
+			m_destination.w = dst.w;
+			m_destination.h = dst.h;
 		}
 
 		void asset_t::set_src(const rect_t& src)
@@ -83,10 +83,10 @@ namespace sdl
 
 		void asset_t::set_dst(const rect_t& dst)
 		{
-			x = dst.x;
-			y = dst.y;
-			w = dst.w;
-			h = dst.h;
+			m_destination.x = dst.x;
+			m_destination.y = dst.y;
+			m_destination.w = dst.w;
+			m_destination.h = dst.h;
 		}
 
 		rect_t asset_t::get_src() const
@@ -170,14 +170,6 @@ namespace sdl
 		// Just dont be a dumb bitch and call this when m_texture is null and all should be good
 		void spritesheet_t::render(uint8_t alpha)
 		{
-			x += vel_x;
-			y += vel_y;
-
-			m_destination.x = x;
-			m_destination.y = y;
-			m_destination.w = w;
-			m_destination.h = h;
-
 			if (flip == SDL_FLIP_NONE)
 			{
 				m_texture->render(m_source, m_destination, alpha);
@@ -212,13 +204,8 @@ namespace sdl
 
 		void spritepack_t::render(uint8_t alpha)
 		{
-			x += vel_x;
-			y += vel_y;
-
-			m_destination.x = x;
-			m_destination.y = y;
-			m_destination.w = w;
-			m_destination.h = h;
+			m_destination.x += vel_x;
+			m_destination.y += vel_y;
 
 			if (flip == SDL_FLIP_NONE)
 			{

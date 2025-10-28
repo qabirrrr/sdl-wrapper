@@ -236,8 +236,7 @@ namespace sdl
 	void update()
 	{
 		keys::update();
-		g_character = "";
-		SDL_Delay(1000 / 60);
+		SDL_Delay(1000/60);
 	}
 
 	SDL_Renderer* get_renderer()
