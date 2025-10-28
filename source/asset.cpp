@@ -89,6 +89,26 @@ namespace sdl
 			m_destination.h = dst.h;
 		}
 
+		void asset_t::set_x(int x)
+		{
+			m_destination.x = x;
+		}
+
+		void asset_t::set_y(int y)
+		{
+			m_destination.y = y;
+		}
+
+		void asset_t::set_w(int w)
+		{
+			m_destination.w = w;
+		}
+
+		void asset_t::set_h(int h)
+		{
+			m_destination.h = h;
+		}
+
 		rect_t asset_t::get_src() const
 		{
 			return m_source;
@@ -170,6 +190,9 @@ namespace sdl
 		// Just dont be a dumb bitch and call this when m_texture is null and all should be good
 		void spritesheet_t::render(uint8_t alpha)
 		{
+			m_destination.x += vel_x;
+			m_destination.y += vel_y;
+			
 			if (flip == SDL_FLIP_NONE)
 			{
 				m_texture->render(m_source, m_destination, alpha);
