@@ -26,15 +26,26 @@ namespace sdl
 			m_texture.load(filepath);
 		}
 
-		void background_t::render(uint8_t alpha, SDL_RendererFlip flip)
+		void background_t::edit_alpha(uint8_t alpha)
+		{
+			m_alpha = alpha;
+			m_texture.edit_alpha(alpha);
+		}
+
+		uint8_t background_t::get_alpha()
+		{
+			return m_alpha;
+		}
+
+		void background_t::render(SDL_RendererFlip flip)
 		{
 			if (flip == SDL_FLIP_NONE)
 			{
-				m_texture.render(m_source, m_destination, alpha);
+				m_texture.render(m_source, m_destination);
 			}
 			else
 			{
-				m_texture.render(m_source, m_destination, alpha, flip);
+				m_texture.render(m_source, m_destination, flip);
 			}
 		}
 
@@ -171,6 +182,17 @@ namespace sdl
 			m_texture->load(filepath);
 		}
 
+		void spritesheet_t::edit_alpha(uint8_t alpha)
+		{
+			m_alpha = alpha;
+			m_texture->edit_alpha(alpha);
+		}
+
+		uint8_t spritesheet_t::get_alpha()
+		{
+			return m_alpha;
+		}
+
 		void spritesheet_t::insert_spritesheet(texture_t& texture)
 		{
 			if (m_texture)
@@ -188,18 +210,23 @@ namespace sdl
 
 		// The pointer logic in this struct is unsafe asf
 		// Just dont be a dumb bitch and call this when m_texture is null and all should be good
-		void spritesheet_t::render(uint8_t alpha)
+		void spritesheet_t::render(std::optional<uint8_t> alpha)
 		{
 			m_destination.x += vel_x;
 			m_destination.y += vel_y;
-			
+
+			if (alpha.has_value())
+			{
+				edit_alpha(alpha.value());
+			}
+
 			if (flip == SDL_FLIP_NONE)
 			{
-				m_texture->render(m_source, m_destination, alpha);
+				m_texture->render(m_source, m_destination);
 			}
 			else
 			{
-				m_texture->render(m_source, m_destination, alpha, flip);
+				m_texture->render(m_source, m_destination, flip);
 			}
 		}
 
@@ -225,18 +252,37 @@ namespace sdl
 			}
 		}
 
-		void spritepack_t::render(uint8_t alpha)
+		void spritepack_t::edit_alpha(uint8_t alpha) // test this out, havent tried it out to see if it works.
+		{
+			m_alpha = alpha;
+			for (texture_t& frame : m_textures)
+			{
+				frame.edit_alpha(alpha);
+			}
+		}
+
+		uint8_t spritepack_t::get_alpha()
+		{
+			return m_alpha;
+		}
+
+		void spritepack_t::render(std::optional<uint8_t> alpha)
 		{
 			m_destination.x += vel_x;
 			m_destination.y += vel_y;
 
+			if (alpha.has_value())
+			{
+				edit_alpha(alpha.value());
+			}
+
 			if (flip == SDL_FLIP_NONE)
 			{
-				m_textures[animation_index].render(m_source, m_destination, alpha);
+				m_textures[animation_index].render(m_source, m_destination);
 			}
 			else
 			{
-				m_textures[animation_index].render(m_source, m_destination, alpha, flip);
+				m_textures[animation_index].render(m_source, m_destination, flip);
 			}
 		}
 

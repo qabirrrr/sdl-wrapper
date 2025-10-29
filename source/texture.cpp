@@ -57,6 +57,11 @@ namespace sdl
 		return g_textures_loaded;
 	}
 
+	void texture_t::edit_alpha(uint8_t alpha)
+	{
+		SDL_SetTextureAlphaMod(m_sdl_texture, alpha);
+	}
+
 	void texture_t::change(texture_t& texture)
 	{
 		m_filepath = texture.get_filepath();
@@ -74,21 +79,19 @@ namespace sdl
 	}
 
 
-	void texture_t::render(const SDL_Rect& src, const SDL_Rect& dst, uint8_t alpha, SDL_RendererFlip flip)
+	void texture_t::render(const SDL_Rect& src, const SDL_Rect& dst, SDL_RendererFlip flip)
 	{
 		if (flip == SDL_FLIP_NONE)
 		{
 			SDL_RenderCopy(g_renderer, m_sdl_texture, &src, &dst);
-			SDL_SetTextureAlphaMod(m_sdl_texture, alpha);
 		}
 		else
 		{
 			SDL_RenderCopyEx(g_renderer, m_sdl_texture, &src, &dst, 0, NULL, flip);
-			SDL_SetTextureAlphaMod(m_sdl_texture, alpha);
 		}
 	}
 
-	void texture_t::render(const rect_t& src, const rect_t& dst, uint8_t alpha, SDL_RendererFlip flip)
+	void texture_t::render(const rect_t& src, const rect_t& dst, SDL_RendererFlip flip)
 	{
 		// how ugly this is, is beginning to piss me off. pls change this eventually
 		SDL_Rect s = src.c_rec();
