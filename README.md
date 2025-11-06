@@ -111,9 +111,10 @@ int main(int argc, char* args[])
 
         // Display
         sdl::render::present();
+        sdl::limit_fps(60);
 
-        // Update
-        sdl::update();
+        // End frame
+        sdl::end_frame();
     }
     
     // Clean up everything

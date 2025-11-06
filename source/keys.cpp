@@ -12,7 +12,7 @@ namespace sdl
 			std::memcpy(dst, src, SDL_NUM_SCANCODES * sizeof(uint8_t));
 		}
 
-		void update()
+		void end_frame()
 		{
 			copy_key(g_previous_keystate, g_current_keystate); // previousState = currentState;  (essentially)
 		}

@@ -14,6 +14,32 @@ namespace sdl
 			m_destination = { 0, 0, g_width, g_height };
 		}
 
+		void background_t::set_src(int x, int y, int w, int h)
+		{
+			m_source.x = x;
+			m_source.y = y;
+			m_source.w = w;
+			m_source.h = h;
+		}
+
+		void background_t::set_dst(int x, int y, int w, int h)
+		{
+			m_destination.x = x;
+			m_destination.y = y;
+			m_destination.w = w;
+			m_destination.h = h;
+		}
+
+		rect_t background_t::get_src()
+		{
+			return m_source;
+		}
+
+		rect_t background_t::get_dst()
+		{
+			return m_destination;
+		}
+
 		background_t::background_t(const std::string& filepath)
 		{
 			m_source = { 0, 0, g_width, g_height };
@@ -100,22 +126,42 @@ namespace sdl
 			m_destination.h = dst.h;
 		}
 
-		void asset_t::set_x(int x)
+		void asset_t::set_src_x(int x)
+		{
+			m_source.x = x;
+		}
+
+		void asset_t::set_src_y(int y)
+		{
+			m_source.y = y;
+		}
+
+		void asset_t::set_src_w(int w)
+		{
+			m_source.w = w;
+		}
+
+		void asset_t::set_src_h(int h)
+		{
+			m_source.h = h;
+		}
+
+		void asset_t::set_dst_x(int x)
 		{
 			m_destination.x = x;
 		}
 
-		void asset_t::set_y(int y)
+		void asset_t::set_dst_y(int y)
 		{
 			m_destination.y = y;
 		}
 
-		void asset_t::set_w(int w)
+		void asset_t::set_dst_w(int w)
 		{
 			m_destination.w = w;
 		}
 
-		void asset_t::set_h(int h)
+		void asset_t::set_dst_h(int h)
 		{
 			m_destination.h = h;
 		}
@@ -161,7 +207,7 @@ namespace sdl
 		}
 
 
-		spritesheet_t::~spritesheet_t()
+		static_texture_t::~static_texture_t()
 		{
 			if (m_allocated)
 			{
@@ -171,7 +217,7 @@ namespace sdl
 			m_texture = nullptr;
 		}
 
-		void spritesheet_t::load(const std::string& filepath)
+		void static_texture_t::load_texture(const std::string& filepath)
 		{
 			if (!m_texture)
 			{
@@ -182,18 +228,18 @@ namespace sdl
 			m_texture->load(filepath);
 		}
 
-		void spritesheet_t::edit_alpha(uint8_t alpha)
+		void static_texture_t::edit_alpha(uint8_t alpha)
 		{
 			m_alpha = alpha;
 			m_texture->edit_alpha(alpha);
 		}
 
-		uint8_t spritesheet_t::get_alpha()
+		uint8_t static_texture_t::get_alpha()
 		{
 			return m_alpha;
 		}
 
-		void spritesheet_t::insert_spritesheet(texture_t& texture)
+		void static_texture_t::change_texture(texture_t& texture)
 		{
 			if (m_texture)
 			{
@@ -210,7 +256,7 @@ namespace sdl
 
 		// The pointer logic in this struct is unsafe asf
 		// Just dont be a dumb bitch and call this when m_texture is null and all should be good
-		void spritesheet_t::render(std::optional<uint8_t> alpha)
+		void static_texture_t::render(std::optional<uint8_t> alpha)
 		{
 			m_destination.x += vel_x;
 			m_destination.y += vel_y;
@@ -233,26 +279,26 @@ namespace sdl
 
 
 
-		void spritepack_t::add_sprite(const std::string& filepath)
+		void dynamic_textures_t::add_texture(const std::string& filepath)
 		{
 			m_textures.emplace_back(filepath);
 		}
 
-		void spritepack_t::delete_spritepack()
+		void dynamic_textures_t::delete_animation()
 		{
 			m_textures.clear();  
 		}
 
-		void spritepack_t::insert_spritepack(std::vector<texture_t>& animation)
+		void dynamic_textures_t::assign_animation(std::vector<texture_t>& animation)
 		{
-			delete_spritepack();
+			delete_animation();
 			for (texture_t& frame : animation)
 			{
-				add_sprite(frame.get_filepath());
+				add_texture(frame.get_filepath());
 			}
 		}
 
-		void spritepack_t::edit_alpha(uint8_t alpha) // test this out, havent tried it out to see if it works.
+		void dynamic_textures_t::edit_alpha(uint8_t alpha) // test this out, havent tried it out to see if it works.
 		{
 			m_alpha = alpha;
 			for (texture_t& frame : m_textures)
@@ -261,12 +307,12 @@ namespace sdl
 			}
 		}
 
-		uint8_t spritepack_t::get_alpha()
+		uint8_t dynamic_textures_t::get_alpha()
 		{
 			return m_alpha;
 		}
 
-		void spritepack_t::render(std::optional<uint8_t> alpha)
+		void dynamic_textures_t::render(std::optional<uint8_t> alpha)
 		{
 			m_destination.x += vel_x;
 			m_destination.y += vel_y;

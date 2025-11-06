@@ -233,11 +233,15 @@ namespace sdl
 		return g_running;
 	}
 
-	void update()
+	void end_frame()
 	{
-		keys::update();
+		keys::end_frame();
 		g_character = "";
-		SDL_Delay(1000/60);
+	}
+
+	void limit_fps(int fps)
+	{
+		SDL_Delay(1000/fps);
 	}
 
 	SDL_Renderer* get_renderer()
