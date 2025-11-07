@@ -307,6 +307,42 @@ namespace sdl
 			}
 		}
 
+		void dynamic_textures_t::set_animation_index(int index)
+		{
+			m_animation_index = index;
+		}
+
+		int dynamic_textures_t::get_animation_index()
+		{
+			return m_animation_index;
+		}	
+
+		int dynamic_textures_t::get_animation_size()
+		{
+			return m_textures.size();
+		}
+
+		bool dynamic_textures_t::increment_animation_index()
+		{
+			if (m_animation_index < m_textures.size() - 1)
+			{
+				m_animation_index++;
+				return true;
+			}
+			return false;
+		}
+
+		bool dynamic_textures_t::decrement_animation_index()
+		{
+			if (m_animation_index > 0)
+			{
+				m_animation_index--;
+				return true;
+			}
+			return false;
+		}
+
+
 		uint8_t dynamic_textures_t::get_alpha()
 		{
 			return m_alpha;
@@ -324,11 +360,11 @@ namespace sdl
 
 			if (flip == SDL_FLIP_NONE)
 			{
-				m_textures[animation_index].render(m_source, m_destination);
+				m_textures[m_animation_index].render(m_source, m_destination);
 			}
 			else
 			{
-				m_textures[animation_index].render(m_source, m_destination, flip);
+				m_textures[m_animation_index].render(m_source, m_destination, flip);
 			}
 		}
 
