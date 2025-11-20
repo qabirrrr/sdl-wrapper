@@ -244,6 +244,16 @@ namespace sdl
 		SDL_Delay(1000/fps);
 	}
 
+	int get_width()
+	{
+		return g_width;
+	}
+
+	int get_height()
+	{
+		return g_height;
+	}
+
 	SDL_Renderer* get_renderer()
 	{
 		return g_renderer;
