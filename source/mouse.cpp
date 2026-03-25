@@ -1,5 +1,5 @@
 #include "../../include/mouse"
-#include "../../include/globals"
+#include "../../include/state"
 
 namespace sdl
 {

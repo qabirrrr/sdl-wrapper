@@ -1,5 +1,5 @@
 #include "../../include/keys"
-#include "../../include/globals"
+#include "../../include/state"
 #include <iostream>
 #include <cstring>
 

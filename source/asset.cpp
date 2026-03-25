@@ -1,5 +1,5 @@
 #include "../../include/asset"
-#include "../../include/globals"
+#include "../../include/state"
 #include "../../include/sdl++"
 #include <memory>
 #include <iostream>

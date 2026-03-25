@@ -1,6 +1,6 @@
 #include "../../include/text"
 #include "../../include/mouse"
-#include "../../include/globals"
+#include "../../include/state"
 #include "../../include/sdl++"
 
 namespace sdl 

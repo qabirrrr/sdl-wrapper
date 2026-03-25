@@ -1,5 +1,5 @@
 #include "../../include/rect"
-#include "../../include/globals"
+#include "../../include/state"
 #include "../../include/mouse"
 #include "../../include/sdl++"
 

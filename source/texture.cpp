@@ -1,5 +1,5 @@
 #include "../../include/texture"
-#include "../../include/globals"
+#include "../../include/state"
 #include <iostream>
 
 namespace sdl 

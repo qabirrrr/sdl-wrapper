@@ -1,5 +1,5 @@
 #include "../../include/render"
-#include "../../include/globals"
+#include "../../include/state"
 
 namespace sdl 
 {
