@@ -4,6 +4,11 @@
 
 namespace sdl
 {
+    bool point_t::operator==(const point_t& other) const
+	{
+		return x == other.x && y == other.y;
+	}
+
 	bool init(const std::string& title, int width, int height, Uint32 flags)
 	{
 		bool can_init = true;
